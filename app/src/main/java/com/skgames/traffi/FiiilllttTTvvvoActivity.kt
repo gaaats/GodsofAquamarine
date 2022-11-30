@@ -75,7 +75,6 @@ class FiiilllttTTvvvoActivity : AppCompatActivity() {
 
             Log.d("lolo", "appsChfrfgtg $apapapap")
 
-
             val bnbnbnb = Executors.newSingleThreadScheduledExecutor()
             bnbnbnb.scheduleAtFixedRate({
                 if (anananan != null) {

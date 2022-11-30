@@ -3,7 +3,9 @@ package com.skgames.traffi
 import android.app.Application
 import com.onesignal.OneSignal
 import com.orhanobut.hawk.Hawk
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class AppClaaas : Application() {
     companion object {
         const val koko = "b9ac65a3-cb89-4d51-8732-9d574cd861d4"

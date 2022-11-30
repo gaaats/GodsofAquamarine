@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             .baseUrl("http://pro.ip-api.com/")
             .build()
             .create(ServiceApi::class.java)
-        val nmnmnmkh = sssookkl.getData().body()?.cvcvcv
+        val nmnmnmkh = sssookkl.getData().body()?.countryCode
 
         Hawk.put(kokos, nmnmnmkh)
     }
@@ -97,9 +97,9 @@ class MainActivity : AppCompatActivity() {
             .baseUrl("http://godsofaquamarine.xyz/")
             .build()
             .create(ServiceApi::class.java)
-        val cdccd = yhhyyyh.getDataDev().body()?.gyhyhy.toString()
-        val momma = yhhyyyh.getDataDev().body()?.cvcvcv.toString()
-        val cccooks = yhhyyyh.getDataDev().body()?.hyhhyy.toString()
+        val cdccd = yhhyyyh.getDataDev().body()?.view.toString()
+        val momma = yhhyyyh.getDataDev().body()?.appsChecker.toString()
+        val cccooks = yhhyyyh.getDataDev().body()?.geo.toString()
 
 
         Log.d("lolo", "frfrrfgr $cdccd")

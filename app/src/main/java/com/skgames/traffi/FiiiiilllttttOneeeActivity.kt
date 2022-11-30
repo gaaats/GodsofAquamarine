@@ -13,11 +13,12 @@ import com.orhanobut.hawk.Hawk
 import com.skgames.traffi.AppClaaas.Companion.bbbvv
 
 
-class FiiiiilllttttOneeeActivity : AppCompatActivity() {   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_fiiiiillltttt_oneee)
-    checkCountry()
-}
+class FiiiiilllttttOneeeActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_fiiiiillltttt_oneee)
+        checkCountry()
+    }
 
     private fun intALonehyhyy() {
         val ddede = Intent(this@FiiiiilllttttOneeeActivity, GaammActivity::class.java)
@@ -63,7 +64,6 @@ class FiiiiilllttttOneeeActivity : AppCompatActivity() {   override fun onCreate
         Log.d("lolo", "AdvertisingIdClient $bobobo")
         Hawk.put(bbbvv, bobobo)
     }
-
 
 
 }
