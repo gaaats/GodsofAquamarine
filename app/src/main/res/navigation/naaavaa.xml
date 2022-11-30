@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/naaavaa"
+    app:startDestination="@id/ennnntterFragment">
+
+    <fragment
+        android:id="@+id/ennnntterFragment"
+        android:name="com.skgames.traffi.EnnnntterFragment"
+        android:label="fragment_ennnntter"
+        tools:layout="@layout/fragment_ennnntter" >
+        <action
+            android:id="@+id/action_ennnntterFragment_to_gaaaamiFragment"
+            app:destination="@id/gaaaamiFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gaaaamiFragment"
+        android:name="com.skgames.traffi.GaaaamiFragment"
+        android:label="fragment_gaaaami"
+        tools:layout="@layout/fragment_gaaaami" >
+        <action
+            android:id="@+id/action_gaaaamiFragment_to_restartFragment"
+            app:destination="@id/restartFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/restartFragment"
+        android:name="com.skgames.traffi.RestartFragment"
+        android:label="fragment_restart"
+        tools:layout="@layout/fragment_restart" >
+        <action
+            android:id="@+id/action_restartFragment_to_ennnntterFragment"
+            app:destination="@id/ennnntterFragment"
+            app:launchSingleTop="true" />
+    </fragment>
+</navigation>

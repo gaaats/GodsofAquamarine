@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Gods of Aquamarine</string>
+
+    <string name="app_name__frrf">© Gods of Aquamarine</string>
+
+    <string name="take_imagefgtgt">Choose Image</string>
+
+
+    <string name="facebook_app_idfgtgt">644762640789230</string>
+    <string name="fb_login_protocol_schemegtgt">fb644762640789230</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragmentgtgt">Hello blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
