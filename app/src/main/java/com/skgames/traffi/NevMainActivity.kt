@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.facebook.applinks.AppLinkData
 import com.google.android.material.snackbar.Snackbar
 import com.skgames.traffi.databinding.ActivityNevMainBinding
 import com.skgames.traffi.nev.Constance
@@ -24,13 +25,35 @@ class NevMainActivity : AppCompatActivity() {
     private var _binding: ActivityNevMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("ActivityNevMainBinding = null")
 
+        fun fetchDeferredAppLinkData() {
+        AppLinkData.fetchDeferredAppLinkData(
+            application
+        ) { appLinkData: AppLinkData? ->
+            appLinkData?.let {
+
+                val daaata = appLinkData.targetUri.host.toString()
+                mainViewModel.getffFetchDeferredAppLinkData(daaata)
+
+                Log.d("lolo", "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}")
+
+            }
+            if (appLinkData == null) {
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
-        Log.d("testVievModel", "vievmodelId $mainViewModel")
         _binding = ActivityNevMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        fetchDeferredAppLinkData()
+
+        Log.d("testVievModel", "vievmodelId $mainViewModel")
+
+
+
 
         mainViewModel.ansvFromDevil.observe(this) {
             when (it) {

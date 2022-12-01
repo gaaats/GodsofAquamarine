@@ -54,9 +54,6 @@ class SortVievModell @Inject constructor(
     val appLinkData: LiveData<String>
         get() = _appLinkData
 
-    fun getFetchDeferredAppLinkData(appLinkData:String){
-
-    }
 
 
     private val appsFlyerConversionListener = object : AppsFlyerConversionListener {
@@ -72,23 +69,29 @@ class SortVievModell @Inject constructor(
         override fun onAttributionFailure(p0: String?) {}
     }
 
-    fun fetchDeferredAppLinkData() {
-        AppLinkData.fetchDeferredAppLinkData(
-            application
-        ) { appLinkData: AppLinkData? ->
-            appLinkData?.let {
+    fun getffFetchDeferredAppLinkData(appLinkData:String){
 
-                val bgbggbg = appLinkData.targetUri.host.toString()
-                _appLinkData.postValue(bgbggbg)
+        _appLinkData.value = appLinkData
 
-//                _appLinkData.value = bgbggbg
-
-                //                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
-            }
-            if (appLinkData == null) {
-            }
-        }
     }
+
+//    fun fetchDeferredAppLinkData() {
+//        AppLinkData.fetchDeferredAppLinkData(
+//            application
+//        ) { appLinkData: AppLinkData? ->
+//            appLinkData?.let {
+//
+//                val bgbggbg = appLinkData.targetUri.host.toString()
+//                _appLinkData.postValue(bgbggbg)
+//
+////                _appLinkData.value = bgbggbg
+//
+//                //                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
+//            }
+//            if (appLinkData == null) {
+//            }
+//        }
+//    }
 
     init {
         _ansvFromGeoService.value = DataFromApiResource.Loading()
@@ -96,7 +99,7 @@ class SortVievModell @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             getAdvertisingIdClient()
-            fetchDeferredAppLinkData()
+//            fetchDeferredAppLinkData()
         }
 
 
