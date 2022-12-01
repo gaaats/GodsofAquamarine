@@ -15,6 +15,7 @@ import com.skgames.traffi.nev.DataForVebViev
 import com.skgames.traffi.nev.DataFromApiResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -70,9 +71,7 @@ class SortVievModell @Inject constructor(
     }
 
     fun getffFetchDeferredAppLinkData(appLinkData:String){
-
-        _appLinkData.value = appLinkData
-
+        _appLinkData.postValue(appLinkData)
     }
 
 //    fun fetchDeferredAppLinkData() {
@@ -94,6 +93,8 @@ class SortVievModell @Inject constructor(
 //    }
 
     init {
+
+        _appLinkData.value = "null"
         _ansvFromGeoService.value = DataFromApiResource.Loading()
         _ansvFromGeoService.value = DataFromApiResource.Loading()
 
@@ -134,8 +135,8 @@ class SortVievModell @Inject constructor(
 //        val dataAppLinkData: String =
 //            Hawk.get(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
 
-        val dataGottenApps = _appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
-        val dataAppLinkData = _appLinkData.value ?: Constance.KEY_NOOOOO_DATA
+        val dataGottenApps = appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
+        val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
 
 
         Log.d("lolo", "data before check:Checker $checker")
@@ -149,6 +150,7 @@ class SortVievModell @Inject constructor(
         when (checker) {
 
             "1" -> {
+
                 Log.d("lolo", "i am in 1 check")
                 makeAppsInit()
                 if (
@@ -192,6 +194,9 @@ class SortVievModell @Inject constructor(
             .create(ServiceApi::class.java)
 
         if (apiResponse.getDataDev().isSuccessful) {
+
+            //it is here
+            delay(4500)
             val result = apiResponse.getDataDev().body()
             _ansvFromDevil.value = DataFromApiResource.Success(data = result!!)
 

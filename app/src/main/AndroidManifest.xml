@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+
     <application
         android:name=".AppClaaas"
         android:allowBackup="true"
@@ -66,7 +67,7 @@
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_idfgtgt" />
+            android:value="@string/facebook_app_id" />
     </application>
 
 </manifest>

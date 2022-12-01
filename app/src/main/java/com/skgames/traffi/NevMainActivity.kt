@@ -1,5 +1,6 @@
 package com.skgames.traffi
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +12,6 @@ import com.skgames.traffi.databinding.ActivityNevMainBinding
 import com.skgames.traffi.nev.Constance
 import com.skgames.traffi.nev.DataFromApiResource
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ActivityScoped
 
 
@@ -25,19 +25,83 @@ class NevMainActivity : AppCompatActivity() {
     private var _binding: ActivityNevMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("ActivityNevMainBinding = null")
 
-        fun fetchDeferredAppLinkData() {
+    var lolo = "ffffff"
+
+
+//    fun deePP(context: Context) {
+//
+//        AppLinkData.fetchDeferredAppLinkData(
+//            context
+//        ) { appLinkData: AppLinkData? ->
+//            appLinkData?.let {
+//                val params = appLinkData.targetUri.host.toString()
+//
+//                Snackbar.make(
+//                    binding.root, "appLinkData is $params",
+//                    Snackbar.LENGTH_SHORT
+//                ).show()
+//
+//
+//            }
+//        }
+//    }
+
+//    fun deePP(context: Context) {
+//
+//        AppLinkData.fetchDeferredAppLinkData(
+//            context
+//        ) { appLinkData: AppLinkData? ->
+//            appLinkData?.let {
+//
+//                val params = appLinkData.targetUri?.host
+//
+//                Snackbar.make(
+//                    binding.root, "appLinkData is ${params}",
+//                    Snackbar.LENGTH_SHORT
+//                ).show()
+//
+//
+//            }
+//            if (appLinkData == null) {
+//                Snackbar.make(
+//                    binding.root, "appLinkData is nuuuuuuuuuul",
+//                    Snackbar.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+//    }
+
+    fun fetchDeferredAppLinkData(context: Context) {
+        Log.d("appLinkDataaaa", "i am in fetchDeferredAppLinkData in NevMainActivity")
         AppLinkData.fetchDeferredAppLinkData(
-            application
+            context
         ) { appLinkData: AppLinkData? ->
+
             appLinkData?.let {
 
                 val daaata = appLinkData.targetUri.host.toString()
                 mainViewModel.getffFetchDeferredAppLinkData(daaata)
 
-                Log.d("lolo", "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}")
+                Snackbar.make(
+                    binding.root, "appLinkData is ${daaata}",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+
+                Log.d(
+                    "appLinkDataaaa",
+                    "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}"
+                )
 
             }
             if (appLinkData == null) {
+//                Snackbar.make(
+//                    binding.root, "appLinkData is nuuuuuuuuuul",
+//                    Snackbar.LENGTH_SHORT
+//                ).show()
+//                Log.d(
+//                    "appLinkDataaaa",
+//                    "i am in fetchDeferredAppLinkData in NevMainActivity and appLinkData == null"
+//                )
             }
         }
     }
@@ -48,13 +112,15 @@ class NevMainActivity : AppCompatActivity() {
         _binding = ActivityNevMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fetchDeferredAppLinkData()
+//        deePP(this)
 
-        Log.d("testVievModel", "vievmodelId $mainViewModel")
+        fetchDeferredAppLinkData(this)
 
-
-
-
+//        Log.d("testVievModel", "vievmodelId $mainViewModel")
+//
+//
+//
+//
         mainViewModel.ansvFromDevil.observe(this) {
             when (it) {
                 is DataFromApiResource.Success -> {
@@ -63,7 +129,10 @@ class NevMainActivity : AppCompatActivity() {
                     when (mainViewModel.currentMode.value) {
 
                         SortClass.MODERATION -> {
-                            Log.d("lolo", "mainViewModel.currentMode.value ${mainViewModel.currentMode.value}")
+                            Log.d(
+                                "lolo",
+                                "mainViewModel.currentMode.value ${mainViewModel.currentMode.value}"
+                            )
                             Log.d("lolo", "SortClass.MODERATION")
 
                             val intent = Intent(this, GaammActivity::class.java)
@@ -118,30 +187,6 @@ class NevMainActivity : AppCompatActivity() {
             }
         }
 
-//        mainViewModel.currentMode.observe(this) {
-//            when (it) {
-//                SortClass.MODERATION -> {
-//                    val intent = Intent(this, GaammActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
-//                SortClass.TEST_VEB -> {
-//                    val intent = Intent(this, PolicyActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
-//                SortClass.TEST_ZAGLUSHKA_LIKE_MODERATION -> {
-//                    val intent = Intent(this, GaammActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
-//                SortClass.REAL_START -> {
-//                    val intent = Intent(this, PolicyActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
-//
-//            }
-//        }
+
     }
 }

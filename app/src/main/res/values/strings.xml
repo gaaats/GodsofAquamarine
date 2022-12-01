@@ -6,8 +6,17 @@
     <string name="take_imagefgtgt">Choose Image</string>
 
 
-    <string name="facebook_app_idfgtgt">644762640789230</string>
-    <string name="fb_login_protocol_schemegtgt">fb644762640789230</string>
+<!--    <string name="facebook_app_idfgtgt">644762640789230</string>-->
+    <string name="facebook_app_id">1251798448719972</string>
+<!--    <string name="facebook_app_idfgtgt">884009655584593</string>-->
+
+
+
+
+<!--    <string name="fb_login_protocol_schemegtgt">fb644762640789230</string>-->
+    <string name="fb_login_protocol_scheme">fb1251798448719972</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragmentgtgt">Hello blank fragment</string>
     <!-- TODO: Remove or change this placeholder text -->

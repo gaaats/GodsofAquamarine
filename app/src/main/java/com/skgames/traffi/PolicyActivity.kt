@@ -11,6 +11,7 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.appsflyer.AppsFlyerLib
 import com.google.android.material.snackbar.Snackbar
 import com.onesignal.OneSignal
@@ -20,20 +21,21 @@ import com.skgames.traffi.nev.DataForVebViev
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.android.scopes.ActivityScoped
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-@AndroidEntryPoint
-@ActivityScoped
+
 class PolicyActivity : AppCompatActivity() {
 
     val dataRecived by lazy {
         intent.getParcelableExtra(Constance.KEY_DATA_FOR_VEB_VIEV) as DataForVebViev?
     }
 
-    private val mainViewModel by viewModels<SortVievModell>()
+//    private val mainViewModel by viewModels<SortVievModell>()
 
 
     private val bnbnbn = 1
@@ -99,16 +101,28 @@ class PolicyActivity : AppCompatActivity() {
 
 //        val bnbbj:String? = Hawk.get(hkhkhkhk, "null")
         Log.d("lolo", "dataRecived in vebViev $dataRecived")
-        val appsFlyData = dataRecived?.appsFlyerDattaGotten?:"null"
+        val appsFlyData = dataRecived?.appsFlyerDattaGotten ?: "null"
 
 //        val advId: String? = Hawk.get(bbbvv, "null")
-        val advId = dataRecived?.advertisingIdClient?:"null"
+        val advId = dataRecived?.advertisingIdClient ?: "null"
 
 //        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
-        val appLinkData = dataRecived?.appLinkData?:"null"
+        val appLinkData = dataRecived?.appLinkData ?: "null"
+//        Snackbar.make(
+//            dededef.root, "appLinkData is ${appLinkData}",
+//            Snackbar.LENGTH_SHORT
+//        ).show()
+
+        lifecycleScope.launch {
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "appsFlyerDattaGotten is ${appsFlyData}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+        }
 
 //        val gtgttg = Hawk.get(vfvvfvf, "null")
-        val linkkk = dataRecived?.linkViev?:"null"
+        val linkkk = dataRecived?.linkViev ?: "null"
 
         val vcdcdcdcd = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
 
@@ -138,6 +152,10 @@ class PolicyActivity : AppCompatActivity() {
                 "$linkkk$frfrfrfr$appLinkData&$bbgbg$vcdcdcdcd&$adidddddd$advId&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$bnbnbn"
             pussshi(vcdcdcdcd.toString())
         }
+        Snackbar.make(
+            dededef.root, "Link is ${hylphlyplhly}",
+            Snackbar.LENGTH_SHORT
+        ).show()
         Log.d("lolo", "link from vebViev is $hylphlyplhly")
         return ftgttg.getString("SAVED_URL", hylphlyplhly).toString()
     }
@@ -146,15 +164,17 @@ class PolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("testVievModel", "vievmodelId $mainViewModel")
+//        Log.d("testVievModel", "vievmodelId $mainViewModel")
         dededef = ActivityPolicyBinding.inflate(layoutInflater)
         setContentView(dededef.root)
 
         jgidhgjdk = dededef.vvveeev
-        Snackbar.make(
-            dededef.root, "Loading...",
-            Snackbar.LENGTH_LONG
-        ).show()
+
+        //todo return later
+//        Snackbar.make(
+//            dededef.root, "Loading...",
+//            Snackbar.LENGTH_LONG
+//        ).show()
 
 
         val gttgththy = CookieManager.getInstance()

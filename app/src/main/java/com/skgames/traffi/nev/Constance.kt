@@ -16,10 +16,13 @@ object Constance {
     const val KEY_ADVERT_USER_ID = "advert_user_id"
     const val KEY_NULL_ADVERT_USER_ID = "null"
 
-    const val KEY_NOOOOO_DATA = "no_data"
+    const val KEY_NOOOOO_DATA = "null"
 
     const val ONE_SIGNAL_ID = "b9ac65a3-cb89-4d51-8732-9d574cd861d4"
 
     const val KEY_DATA_FOR_VEB_VIEV = "dataForVebViev"
+
+    const val KEY_MAIN_FOR_SHARED_PREF = "keeeey"
+
 
 }

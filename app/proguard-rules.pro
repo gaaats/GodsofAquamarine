@@ -4,10 +4,10 @@
 
 
 #Hawk
--keepclassmembers @com.facebook.crypto.proguard.annotations.KeepGettersAndSetters class * {
-  void set*(***);
-  *** get*();
-}
+#-keepclassmembers @com.facebook.crypto.proguard.annotations.KeepGettersAndSetters class * {
+#  void set*(***);
+#  *** get*();
+#}
 
 
 #Lottie
@@ -21,6 +21,19 @@
 #Coroutines
 -keep class kotlinx.coroutines.**
 -dontwarn kotlinx.coroutines.**
+
+
+-keepnames class * implements android.os.Parcelable
+-keepclassmembers class * implements android.os.Parcelable {
+  public static final *** CREATOR;
+}
+# Facebook
+-keep class com.facebook.** {
+   *;
+}
+
+
+
 
 # Retrofit
 -keep class com.google.gson.** { *; }

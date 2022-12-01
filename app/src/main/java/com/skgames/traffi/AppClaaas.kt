@@ -2,7 +2,6 @@ package com.skgames.traffi
 
 import android.app.Application
 import com.onesignal.OneSignal
-import com.skgames.traffi.nev.Constance
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -26,7 +25,7 @@ class AppClaaas : Application() {
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE)
 
         OneSignal.initWithContext(this)
-        OneSignal.setAppId(Constance.ONE_SIGNAL_ID)
+        OneSignal.setAppId("b9ac65a3-cb89-4d51-8732-9d574cd861d4")
 
 
 //
