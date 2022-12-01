@@ -5,26 +5,37 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
-import androidx.appcompat.app.AppCompatActivity
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.*
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.appsflyer.AppsFlyerLib
 import com.google.android.material.snackbar.Snackbar
 import com.onesignal.OneSignal
-import com.orhanobut.hawk.Hawk
-import com.skgames.traffi.AppClaaas.Companion.hkhkhkhk
-import com.skgames.traffi.AppClaaas.Companion.vovovo
-import com.skgames.traffi.AppClaaas.Companion.bbbvv
-import com.skgames.traffi.AppClaaas.Companion.vfvvfvf
 import com.skgames.traffi.databinding.ActivityPolicyBinding
+import com.skgames.traffi.nev.Constance
+import com.skgames.traffi.nev.DataForVebViev
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.android.scopes.ActivityScoped
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
+@AndroidEntryPoint
+@ActivityScoped
 class PolicyActivity : AppCompatActivity() {
+
+    val dataRecived by lazy {
+        intent.getParcelableExtra(Constance.KEY_DATA_FOR_VEB_VIEV) as DataForVebViev?
+    }
+
+    private val mainViewModel by viewModels<SortVievModell>()
+
+
     private val bnbnbn = 1
 
     private fun bobik() {
@@ -68,7 +79,8 @@ class PolicyActivity : AppCompatActivity() {
                     lurlurlurlurlur
                 ).toString()
 
-                val cccvfc = getSharedPreferences("SP_WEBVIEW_PREFS", AppCompatActivity.MODE_PRIVATE)
+                val cccvfc =
+                    getSharedPreferences("SP_WEBVIEW_PREFS", AppCompatActivity.MODE_PRIVATE)
                 val ededededededed = cccvfc.edit()
                 ededededededed.putString("SAVED_URL", lurlurlurlurlur)
                 ededededededed.apply()
@@ -83,9 +95,20 @@ class PolicyActivity : AppCompatActivity() {
     private fun bbnbnko(): String {
         val ftgttg = getSharedPreferences("SP_WEBVIEW_PREFS", AppCompatActivity.MODE_PRIVATE)
         val packfrfrrfr = "com.skgames.traffi"
-        val bnbbj:String? = Hawk.get(hkhkhkhk, "null")
-        val bgbgbg: String? = Hawk.get(bbbvv, "null")
-        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
+
+
+//        val bnbbj:String? = Hawk.get(hkhkhkhk, "null")
+        Log.d("lolo", "dataRecived in vebViev $dataRecived")
+        val appsFlyData = dataRecived?.appsFlyerDattaGotten?:"null"
+
+//        val advId: String? = Hawk.get(bbbvv, "null")
+        val advId = dataRecived?.advertisingIdClient?:"null"
+
+//        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
+        val appLinkData = dataRecived?.appLinkData?:"null"
+
+//        val gtgttg = Hawk.get(vfvvfvf, "null")
+        val linkkk = dataRecived?.linkViev?:"null"
 
         val vcdcdcdcd = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
 
@@ -104,23 +127,26 @@ class PolicyActivity : AppCompatActivity() {
 
         val eerret = Build.VERSION.RELEASE
 
-        val gtgttg = Hawk.get(vfvvfvf, "null")
 
         var hylphlyplhly = ""
-        if (bnbbj != "null"){
-            hylphlyplhly = "$gtgttg$frfrfrfr$bnbbj&$bbgbg$vcdcdcdcd&$adidddddd$bgbgbg&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$nononok"
+        if (appsFlyData != "null") {
+            hylphlyplhly =
+                "$linkkk$frfrfrfr$appsFlyData&$bbgbg$vcdcdcdcd&$adidddddd$advId&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$nononok"
             pussshi(vcdcdcdcd.toString())
         } else {
-            hylphlyplhly = "$gtgttg$frfrfrfr$dpOnefrfrr&$bbgbg$vcdcdcdcd&$adidddddd$bgbgbg&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$bnbnbn"
+            hylphlyplhly =
+                "$linkkk$frfrfrfr$appLinkData&$bbgbg$vcdcdcdcd&$adidddddd$advId&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$bnbnbn"
             pussshi(vcdcdcdcd.toString())
         }
-        Log.d("lolo", "link is $hylphlyplhly")
+        Log.d("lolo", "link from vebViev is $hylphlyplhly")
         return ftgttg.getString("SAVED_URL", hylphlyplhly).toString()
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.d("testVievModel", "vievmodelId $mainViewModel")
         dededef = ActivityPolicyBinding.inflate(layoutInflater)
         setContentView(dededef.root)
 
@@ -299,10 +325,6 @@ class PolicyActivity : AppCompatActivity() {
                 }
             })
     }
-
-
-
-
 
 
     private fun bgbggbffff(uri: String): Boolean {

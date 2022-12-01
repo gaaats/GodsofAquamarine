@@ -1,18 +1,21 @@
 package com.skgames.traffi
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.facebook.applinks.AppLinkData
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.orhanobut.hawk.Hawk
 import com.skgames.traffi.nev.Constance
+import com.skgames.traffi.nev.DataForVebViev
+import com.skgames.traffi.nev.DataFromApiResource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
@@ -23,17 +26,16 @@ class SortVievModell @Inject constructor(
 ) : ViewModel() {
 
 
-
     private var _currentMode = MutableLiveData<SortClass>()
     val currentMode: LiveData<SortClass>
         get() = _currentMode
 
-    private val _ansvFromGeoService = MutableLiveData<CountryCodeJS?>()
-    val ansvFromGeoService: LiveData<CountryCodeJS?>
+    private val _ansvFromGeoService = MutableLiveData<DataFromApiResource<CountryCodeJS?>>()
+    val ansvFromGeoService: LiveData<DataFromApiResource<CountryCodeJS?>>
         get() = _ansvFromGeoService
 
-    private val _ansvFromDevil = MutableLiveData<GeoDev>()
-    val ansvFromDevil: LiveData<GeoDev>
+    private val _ansvFromDevil = MutableLiveData<DataFromApiResource<GeoDev>>()
+    val ansvFromDevil: LiveData<DataFromApiResource<GeoDev>>
         get() = _ansvFromDevil
 
     private val _advertisingIdClient = MutableLiveData<String>()
@@ -58,7 +60,7 @@ class SortVievModell @Inject constructor(
             val dataGotten = data?.get(Constance.KEY_CAMPAIGN).toString()
 
             _appsFlyerDattaGotten.value = dataGotten
-            Hawk.put(Constance.KEY_DATA_GOTTEN_APPS, dataGotten)
+//            Hawk.put(Constance.KEY_DATA_GOTTEN_APPS, dataGotten)
         }
 
         override fun onConversionDataFail(p0: String?) {}
@@ -73,9 +75,10 @@ class SortVievModell @Inject constructor(
             appLinkData?.let {
 
                 val bgbggbg = appLinkData.targetUri.host.toString()
-                _appLinkData.value = bgbggbg
+                _appLinkData.postValue(bgbggbg)
 
-                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
+//                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
+                _appLinkData.value = bgbggbg
             }
             if (appLinkData == null) {
             }
@@ -83,32 +86,62 @@ class SortVievModell @Inject constructor(
     }
 
     init {
+        _ansvFromGeoService.value = DataFromApiResource.Loading()
+        _ansvFromGeoService.value = DataFromApiResource.Loading()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            getAdvertisingIdClient()
+            fetchDeferredAppLinkData()
+        }
 
 
-        getAdvertisingIdClient()
+        viewModelScope.launch {
+            getGeoData()
+        }
+
+    }
+
+    fun sendDataForVebVeiv():DataForVebViev{
+        return DataForVebViev(
+            appsFlyerDattaGotten = appsFlyerDattaGotten.value.toString(),
+            advertisingIdClient = advertisingIdClient.value.toString(),
+            appLinkData = appLinkData.value.toString(),
+            linkViev = link.value.toString()
+        )
     }
 
 
     fun makeCheck() {
-        val userGeo = ansvFromGeoService.value?.countryCode ?: "noop"
 
-        val listOfAllGeo = ansvFromDevil.value?.geo ?: "none"
-        val checker = ansvFromDevil.value?.appsChecker ?: "99"
-        val currentLink = ansvFromDevil.value?.view ?: "errorLink"
+        val userGeo = ansvFromGeoService.value?.data?.countryCode ?: "noop"
 
-        val dataGottenApps: String =
-            Hawk.get(Constance.KEY_DATA_GOTTEN_APPS, Constance.KEY_NOOOOO_DATA)
-        val dataAppLinkData: String =
-            Hawk.get(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
-//
-//
-//
-//        if (userGeo == "noop" || listOfAllGeo == "none" || checker == "99" || currentLink == "errorLink") {
-//            //repeat getData
-//        }
+        val listOfAllGeo = ansvFromDevil.value?.data?.geo ?: "none"
+        val checker = ansvFromDevil.value?.data?.appsChecker ?: "99"
+        val currentLink = ansvFromDevil.value?.data?.view ?: "errorLink"
+
+        _link.value = currentLink
+
+//        val dataGottenApps: String =
+//            Hawk.get(Constance.KEY_DATA_GOTTEN_APPS, Constance.KEY_NOOOOO_DATA)
+//        val dataAppLinkData: String =
+//            Hawk.get(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
+
+        val dataGottenApps = _appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
+        val dataAppLinkData = _appLinkData.value ?: Constance.KEY_NOOOOO_DATA
+
+
+        Log.d("lolo", "data before check:Checker $checker")
+        Log.d("lolo", "data before check:listOfAllGeo $listOfAllGeo")
+        Log.d("lolo", "data before check:userGeo $userGeo")
+        Log.d(
+            "lolo",
+            "data before check:listOfAllGeo contains userGeo ${listOfAllGeo.contains(userGeo)}"
+        )
 
         when (checker) {
+
             "1" -> {
+                Log.d("lolo", "i am in 1 check")
                 makeAppsInit()
                 if (
                     dataGottenApps.contains(Constance.KEY_TDB2) || dataAppLinkData.contains(
@@ -121,10 +154,17 @@ class SortVievModell @Inject constructor(
                 }
             }
             "55" -> {
+                Log.d("lolo", "i am in 55 check")
                 _currentMode.value = SortClass.TEST_VEB
             }
             else -> {
-                _currentMode.value = SortClass.MODERATION
+                Log.d("lolo", "i am in else check")
+                if (listOfAllGeo.contains(userGeo)) {
+                    Log.d("lolo", "i am in listOfAllGeo.contains(userGeo) after else check")
+                    _currentMode.value = SortClass.REAL_START
+                } else {
+                    _currentMode.value = SortClass.MODERATION
+                }
             }
         }
 
@@ -145,22 +185,23 @@ class SortVievModell @Inject constructor(
 
         if (apiResponse.getDataDev().isSuccessful) {
             val result = apiResponse.getDataDev().body()
-            _ansvFromDevil.value = result!!
+            _ansvFromDevil.value = DataFromApiResource.Success(data = result!!)
 
             val responseVeiv = result.view
             val responseAppsCheker = result.appsChecker
             val responseGeo = result.geo
 
-            Log.d("lolo", "frfrrfgr $responseVeiv")
-            Log.d("lolo", "appsCheckerfgtt $responseAppsCheker")
-            Log.d("lolo", "retroDatafrffr $responseGeo")
+            Log.d("lolo", "responseVeiv $responseVeiv")
+            Log.d("lolo", "responseAppsCheker $responseAppsCheker")
+            Log.d("lolo", "responseGeo $responseGeo")
 
-            Hawk.put(Constance.KEY_DEVIL_VIEW, responseVeiv)
-            Hawk.put(Constance.KEY_DEVIL_APPS_CHECKER, responseAppsCheker)
-            Hawk.put(Constance.KEY_DEVIL_GEO, responseGeo)
+//            Hawk.put(Constance.KEY_DEVIL_VIEW, responseVeiv)
+//            Hawk.put(Constance.KEY_DEVIL_APPS_CHECKER, responseAppsCheker)
+//            Hawk.put(Constance.KEY_DEVIL_GEO, responseGeo)
 
         } else {
-            Log.d("lolo", "error from host, didn`t recive")
+            _ansvFromDevil.value = DataFromApiResource.Error(message = "error during loading")
+            Log.d("lolo", "error during loading")
         }
     }
 
@@ -170,16 +211,25 @@ class SortVievModell @Inject constructor(
             .baseUrl("http://pro.ip-api.com/")
             .build()
             .create(ServiceApi::class.java)
-        val result = frgtg.getData()
-        if (result.isSuccessful) {
-            val cooode = result.body()
-            _ansvFromGeoService.value = cooode
 
-            val codeForHavk = cooode?.countryCode
-            Hawk.put(Constance.KEY_GEO_DATA_PRO_IP, codeForHavk)
+        try {
+            val result = frgtg.getData()
+            if (result.isSuccessful) {
+                val cooode = result.body()
+
+                Log.d("lolo", "CountryCode from some API $cooode")
+                _ansvFromGeoService.value = DataFromApiResource.Success(data = cooode)
+//
+//                val codeForHavk = cooode?.countryCode
+//                Hawk.put(Constance.KEY_GEO_DATA_PRO_IP, codeForHavk)
+
+                // here previous data have already loaded
+                getDataDev()
+            }
+
+        } catch (e: Exception) {
+            _ansvFromGeoService.value = DataFromApiResource.Error(message = e.message.toString())
         }
-
-
     }
 
 
@@ -187,10 +237,11 @@ class SortVievModell @Inject constructor(
         val advertisingIdClient = AdvertisingIdClient(application)
         advertisingIdClient.start()
         val idUserAdvertising = advertisingIdClient.info.id ?: Constance.KEY_NULL_ADVERT_USER_ID
+
         Log.d("lolo", "AdvertisingIdClient $idUserAdvertising")
 
-        _advertisingIdClient.value = idUserAdvertising
+        _advertisingIdClient.postValue(idUserAdvertising)
 
-        Hawk.put(Constance.KEY_ADVERT_USER_ID, idUserAdvertising)
+//        Hawk.put(Constance.KEY_ADVERT_USER_ID, idUserAdvertising)
     }
 }

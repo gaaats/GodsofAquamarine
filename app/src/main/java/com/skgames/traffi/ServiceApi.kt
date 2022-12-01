@@ -33,3 +33,4 @@ data class GeoDev(
     @SerializedName("appsChecker")
     val appsChecker: String,
 )
+

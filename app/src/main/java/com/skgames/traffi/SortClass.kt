@@ -4,6 +4,6 @@ enum class SortClass {
     MODERATION,
     TEST_VEB,
     TEST_ZAGLUSHKA_LIKE_MODERATION,
-    REAL_START
+    REAL_START,
 
 }

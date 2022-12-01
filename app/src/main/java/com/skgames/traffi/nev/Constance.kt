@@ -18,4 +18,8 @@ object Constance {
 
     const val KEY_NOOOOO_DATA = "no_data"
 
+    const val ONE_SIGNAL_ID = "b9ac65a3-cb89-4d51-8732-9d574cd861d4"
+
+    const val KEY_DATA_FOR_VEB_VIEV = "dataForVebViev"
+
 }
