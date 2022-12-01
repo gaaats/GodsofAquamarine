@@ -54,6 +54,10 @@ class SortVievModell @Inject constructor(
     val appLinkData: LiveData<String>
         get() = _appLinkData
 
+    fun getFetchDeferredAppLinkData(appLinkData:String){
+
+    }
+
 
     private val appsFlyerConversionListener = object : AppsFlyerConversionListener {
         override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
@@ -77,8 +81,9 @@ class SortVievModell @Inject constructor(
                 val bgbggbg = appLinkData.targetUri.host.toString()
                 _appLinkData.postValue(bgbggbg)
 
-//                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
-                _appLinkData.value = bgbggbg
+//                _appLinkData.value = bgbggbg
+
+                //                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
             }
             if (appLinkData == null) {
             }

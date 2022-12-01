@@ -103,6 +103,22 @@ class GaaaamiFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         try {
+            bgbhhbhb.imgElem1.isEnabled = true
+            bgbhhbhb.imgElem2.isEnabled = true
+            bgbhhbhb.imgElem3.isEnabled = true
+            bgbhhbhb.imgElem4.isEnabled = true
+            bgbhhbhb.imgElem5.isEnabled = true
+            bgbhhbhb.imgElem6.isEnabled = true
+
+            bgbhhbhb.imgElem1Back.isEnabled = true
+            bgbhhbhb.imgElem2Back.isEnabled = true
+            bgbhhbhb.imgElem3Back.isEnabled = true
+            bgbhhbhb.imgElem4Back.isEnabled = true
+            bgbhhbhb.imgElem5Back.isEnabled = true
+            bgbhhbhb.imgElem6Back.isEnabled = true
+
+
+
             bgbhhbhb.root.background.alpha = 195
             val bhnhnhnnh = toto.random()
 
@@ -147,7 +163,7 @@ class GaaaamiFragment : Fragment() {
 
 
             bgbhhbhb.btnImgExitttt.setOnClickListener {
-                requireActivity().onBackPressed()
+                requireActivity().finish()
             }
 
             bgbhhbhb.imgElem1.setOnClickListener {
@@ -291,7 +307,32 @@ class GaaaamiFragment : Fragment() {
     }
 
     private fun vfccccvb() {
-        findNavController().navigate(R.id.action_gaaaamiFragment_to_restartFragment)
+        bgbhhbhb.imgElem1.isEnabled = false
+        bgbhhbhb.imgElem2.isEnabled = false
+        bgbhhbhb.imgElem3.isEnabled = false
+        bgbhhbhb.imgElem4.isEnabled = false
+        bgbhhbhb.imgElem5.isEnabled = false
+        bgbhhbhb.imgElem6.isEnabled = false
+
+        bgbhhbhb.imgElem1Back.isEnabled = false
+        bgbhhbhb.imgElem2Back.isEnabled = false
+        bgbhhbhb.imgElem3Back.isEnabled = false
+        bgbhhbhb.imgElem4Back.isEnabled = false
+        bgbhhbhb.imgElem5Back.isEnabled = false
+        bgbhhbhb.imgElem6Back.isEnabled = false
+
+
+
+        lifecycleScope.launchWhenCreated {
+            Snackbar.make(
+                bgbhhbhb.root,
+                "Done. Good for you",
+                Snackbar.LENGTH_LONG
+            ).show()
+            delay(2000)
+            findNavController().navigate(R.id.action_gaaaamiFragment_to_restartFragment)
+        }
+
     }
 
     private fun gythhyhy(elemFront: ImageView) = elemFront.visibility == View.INVISIBLE
