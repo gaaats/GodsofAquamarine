@@ -30,8 +30,7 @@
         android:label="fragment_restart"
         tools:layout="@layout/fragment_restart" >
         <action
-            android:id="@+id/action_restartFragment_to_ennnntterFragment"
-            app:destination="@id/ennnntterFragment"
-            app:launchSingleTop="true" />
+            android:id="@+id/action_restartFragment_to_gaaaamiFragment"
+            app:destination="@id/gaaaamiFragment" />
     </fragment>
 </navigation>

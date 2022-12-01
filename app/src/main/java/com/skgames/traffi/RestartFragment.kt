@@ -38,7 +38,7 @@ class RestartFragment : Fragment() {
 
             lifecycleScope.launchWhenCreated {
                 delay(1900)
-                findNavController().navigate(R.id.action_restartFragment_to_ennnntterFragment)
+                findNavController().navigate(R.id.action_restartFragment_to_gaaaamiFragment)
             }
 
 
