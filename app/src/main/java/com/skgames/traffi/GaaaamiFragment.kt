@@ -34,7 +34,7 @@ class GaaaamiFragment : Fragment() {
         listOf(
             ContextCompat.getDrawable(requireActivity(), R.drawable.t1),
             ContextCompat.getDrawable(requireActivity(), R.drawable.t4),
-            ContextCompat.getDrawable(requireActivity(), R.drawable.t5),
+            ContextCompat.getDrawable(requireActivity(), R.drawable.t3),
         )
     }
 
