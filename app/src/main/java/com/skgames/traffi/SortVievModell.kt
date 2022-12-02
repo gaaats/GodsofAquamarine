@@ -1,6 +1,7 @@
 package com.skgames.traffi
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -55,14 +56,30 @@ class SortVievModell @Inject constructor(
     val appLinkData: LiveData<String>
         get() = _appLinkData
 
+    private fun saveSharedPref(key: String, data: String) {
+        val sharedPreferences = application.getSharedPreferences(
+            Constance.KEY_MAIN_FOR_SHARED_PREF,
+            Constance.MODE_PRIVATE
+        )
+        val editable = sharedPreferences.edit()
+
+        editable.putString(key, data)
+        editable.apply()
+    }
+
+    private fun getFromSharedPref(key: String, defaultValue: String): String {
+        val sharedPreferences = application.getSharedPreferences(
+            Constance.KEY_MAIN_FOR_SHARED_PREF,
+            Constance.MODE_PRIVATE
+        )
+        return sharedPreferences.getString(key, defaultValue).toString()
+    }
 
 
     private val appsFlyerConversionListener = object : AppsFlyerConversionListener {
         override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
             val dataGotten = data?.get(Constance.KEY_CAMPAIGN).toString()
-
             _appsFlyerDattaGotten.value = dataGotten
-//            Hawk.put(Constance.KEY_DATA_GOTTEN_APPS, dataGotten)
         }
 
         override fun onConversionDataFail(p0: String?) {}
@@ -70,37 +87,21 @@ class SortVievModell @Inject constructor(
         override fun onAttributionFailure(p0: String?) {}
     }
 
-    fun getffFetchDeferredAppLinkData(appLinkData:String){
-        _appLinkData.postValue(appLinkData)
-    }
-
-//    fun fetchDeferredAppLinkData() {
-//        AppLinkData.fetchDeferredAppLinkData(
-//            application
-//        ) { appLinkData: AppLinkData? ->
-//            appLinkData?.let {
-//
-//                val bgbggbg = appLinkData.targetUri.host.toString()
-//                _appLinkData.postValue(bgbggbg)
-//
-////                _appLinkData.value = bgbggbg
-//
-//                //                Hawk.put(Constance.KEY_APP_LINK_DATA, bgbggbg)
-//            }
-//            if (appLinkData == null) {
-//            }
-//        }
-//    }
 
     init {
+        _currentMode.value = SortClass.LOADING
 
-        _appLinkData.value = "null"
+
+        _appLinkData.value = getFromSharedPref(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
+        _appsFlyerDattaGotten.value = getFromSharedPref(Constance.KEY_DATA_GOTTEN_APPS, Constance.KEY_NOOOOO_DATA)
+        _link.value = getFromSharedPref(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
+        _advertisingIdClient.value = getFromSharedPref(Constance.KEY_ADVERT_USER_ID, Constance.KEY_NOOOOO_DATA)
+
         _ansvFromGeoService.value = DataFromApiResource.Loading()
-        _ansvFromGeoService.value = DataFromApiResource.Loading()
+        _ansvFromDevil.value = DataFromApiResource.Loading()
 
         viewModelScope.launch(Dispatchers.IO) {
             getAdvertisingIdClient()
-//            fetchDeferredAppLinkData()
         }
 
 
@@ -110,7 +111,32 @@ class SortVievModell @Inject constructor(
 
     }
 
-    fun sendDataForVebVeiv():DataForVebViev{
+//    fun fetchDeferredAppLinkData(context: Context) {
+//        Log.d("appLinkDataaaa", "i am in fetchDeferredAppLinkData in VieModel")
+//        AppLinkData.fetchDeferredAppLinkData(
+//            context
+//        ) { appLinkData: AppLinkData? ->
+//            appLinkData?.let {
+//                val daaata = appLinkData.targetUri.host.toString()
+//                _appLinkData.postValue(daaata)
+////                saveSharedPref(Constance.KEY_APP_LINK_DATA, daaata)
+//
+//                Log.d(
+//                    "appLinkDataaaa",
+//                    "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}"
+//                )
+//            }
+//            if (appLinkData == null) {
+//            }
+//        }
+//    }
+
+    fun sendDataForVebVeiv(): DataForVebViev {
+        saveSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, appsFlyerDattaGotten.value.toString())
+        saveSharedPref(Constance.KEY_SHARED_PREF_ADVERT_ID, advertisingIdClient.value.toString())
+        saveSharedPref(Constance.KEY_SHARED_PREF_LINK, link.value.toString())
+        saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, appLinkData.value.toString())
+
         return DataForVebViev(
             appsFlyerDattaGotten = appsFlyerDattaGotten.value.toString(),
             advertisingIdClient = advertisingIdClient.value.toString(),
@@ -122,22 +148,16 @@ class SortVievModell @Inject constructor(
 
     fun makeCheck() {
 
+        val checker = ansvFromDevil.value?.data?.appsChecker ?: "99"
+
         val userGeo = ansvFromGeoService.value?.data?.countryCode ?: "noop"
 
         val listOfAllGeo = ansvFromDevil.value?.data?.geo ?: "none"
-        val checker = ansvFromDevil.value?.data?.appsChecker ?: "99"
+
         val currentLink = ansvFromDevil.value?.data?.view ?: "errorLink"
 
-        _link.value = currentLink
 
-//        val dataGottenApps: String =
-//            Hawk.get(Constance.KEY_DATA_GOTTEN_APPS, Constance.KEY_NOOOOO_DATA)
-//        val dataAppLinkData: String =
-//            Hawk.get(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
-
-        val dataGottenApps = appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
         val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-
 
         Log.d("lolo", "data before check:Checker $checker")
         Log.d("lolo", "data before check:listOfAllGeo $listOfAllGeo")
@@ -150,9 +170,10 @@ class SortVievModell @Inject constructor(
         when (checker) {
 
             "1" -> {
-
                 Log.d("lolo", "i am in 1 check")
                 makeAppsInit()
+
+                val dataGottenApps = appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
                 if (
                     dataGottenApps.contains(Constance.KEY_TDB2) || dataAppLinkData.contains(
                         Constance.KEY_TDB2
@@ -186,39 +207,7 @@ class SortVievModell @Inject constructor(
         AppsFlyerLib.getInstance().start(application)
     }
 
-    suspend fun getDataDev() {
-        val apiResponse = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("http://godsofaquamarine.xyz/")
-            .build()
-            .create(ServiceApi::class.java)
-
-        if (apiResponse.getDataDev().isSuccessful) {
-
-            //it is here
-            delay(4500)
-            val result = apiResponse.getDataDev().body()
-            _ansvFromDevil.value = DataFromApiResource.Success(data = result!!)
-
-            val responseVeiv = result.view
-            val responseAppsCheker = result.appsChecker
-            val responseGeo = result.geo
-
-            Log.d("lolo", "responseVeiv $responseVeiv")
-            Log.d("lolo", "responseAppsCheker $responseAppsCheker")
-            Log.d("lolo", "responseGeo $responseGeo")
-
-//            Hawk.put(Constance.KEY_DEVIL_VIEW, responseVeiv)
-//            Hawk.put(Constance.KEY_DEVIL_APPS_CHECKER, responseAppsCheker)
-//            Hawk.put(Constance.KEY_DEVIL_GEO, responseGeo)
-
-        } else {
-            _ansvFromDevil.value = DataFromApiResource.Error(message = "error during loading")
-            Log.d("lolo", "error during loading")
-        }
-    }
-
-    suspend fun getGeoData() {
+    private suspend fun getGeoData() {
         val frgtg = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("http://pro.ip-api.com/")
@@ -232,9 +221,6 @@ class SortVievModell @Inject constructor(
 
                 Log.d("lolo", "CountryCode from some API $cooode")
                 _ansvFromGeoService.value = DataFromApiResource.Success(data = cooode)
-//
-//                val codeForHavk = cooode?.countryCode
-//                Hawk.put(Constance.KEY_GEO_DATA_PRO_IP, codeForHavk)
 
                 // here previous data have already loaded
                 getDataDev()
@@ -245,6 +231,40 @@ class SortVievModell @Inject constructor(
         }
     }
 
+    private suspend fun getDataDev() {
+        val apiResponse = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("http://godsofaquamarine.xyz/")
+            .build()
+            .create(ServiceApi::class.java)
+
+        if (apiResponse.getDataDev().isSuccessful) {
+
+            //it is here
+
+            val result = apiResponse.getDataDev().body()!!
+
+
+            val responseVeiv = result.view
+            val responseAppsCheker = result.appsChecker
+            val responseGeo = result.geo
+
+            _link.value = responseVeiv
+            delay(1500)
+            _ansvFromDevil.value = DataFromApiResource.Success(data = result)
+
+            Log.d("lolo", "responseVeiv $responseVeiv")
+            Log.d("lolo", "responseAppsCheker $responseAppsCheker")
+            Log.d("lolo", "responseGeo $responseGeo")
+
+        } else {
+            _ansvFromDevil.value = DataFromApiResource.Error(message = "error during loading")
+            Log.d("lolo", "error during loading")
+        }
+
+        makeCheck()
+    }
+
 
     private fun getAdvertisingIdClient() {
         val advertisingIdClient = AdvertisingIdClient(application)
@@ -252,9 +272,12 @@ class SortVievModell @Inject constructor(
         val idUserAdvertising = advertisingIdClient.info.id ?: Constance.KEY_NULL_ADVERT_USER_ID
 
         Log.d("lolo", "AdvertisingIdClient $idUserAdvertising")
-
         _advertisingIdClient.postValue(idUserAdvertising)
 
-//        Hawk.put(Constance.KEY_ADVERT_USER_ID, idUserAdvertising)
+    }
+
+    fun getffFetchDeferredAppLinkData(daaata: String) {
+        _appLinkData.postValue(daaata)
+        saveSharedPref(Constance.KEY_APP_LINK_DATA, daaata)
     }
 }

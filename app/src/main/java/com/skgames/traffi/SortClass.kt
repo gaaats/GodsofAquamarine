@@ -5,5 +5,6 @@ enum class SortClass {
     TEST_VEB,
     TEST_ZAGLUSHKA_LIKE_MODERATION,
     REAL_START,
+    LOADING
 
 }

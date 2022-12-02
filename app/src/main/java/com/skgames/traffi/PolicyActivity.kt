@@ -108,21 +108,49 @@ class PolicyActivity : AppCompatActivity() {
 
 //        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
         val appLinkData = dataRecived?.appLinkData ?: "null"
+
+        val linkkk = dataRecived?.linkViev ?: "null"
+        //        val gtgttg = Hawk.get(vfvvfvf, "null")
+
+
+        val sharedPreferences = application.getSharedPreferences(
+            Constance.KEY_MAIN_FOR_SHARED_PREF,
+            Constance.MODE_PRIVATE
+        )
+//        val linkFromShared =
+//            sharedPreferences.getString(Constance.KEY_SHARED_PREF_LINK, Constance.KEY_NOOOOO_DATA)
+//                .toString()
+//
 //        Snackbar.make(
-//            dededef.root, "appLinkData is ${appLinkData}",
+//            dededef.root, "linkFromShared is ${linkFromShared}",
 //            Snackbar.LENGTH_SHORT
 //        ).show()
 
         lifecycleScope.launch {
+            delay(100)
+            Snackbar.make(
+                dededef.root, "appLinkData from VEBVIEV is ${appLinkData}",
+                Snackbar.LENGTH_SHORT
+            ).show()
+            delay(1500)
+            Snackbar.make(
+                dededef.root, "appsFlyerDattaGotten from VEBVIEV ${appsFlyData}",
+                Snackbar.LENGTH_SHORT
+            ).show()
+//
 //            delay(1500)
 //            Snackbar.make(
-//                dededef.root, "appsFlyerDattaGotten is ${appsFlyData}",
+//                dededef.root, "link is ${linkkk}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "adverId is ${advId}",
 //                Snackbar.LENGTH_SHORT
 //            ).show()
         }
 
-//        val gtgttg = Hawk.get(vfvvfvf, "null")
-        val linkkk = dataRecived?.linkViev ?: "null"
 
         val vcdcdcdcd = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
 
@@ -152,10 +180,10 @@ class PolicyActivity : AppCompatActivity() {
                 "$linkkk$frfrfrfr$appLinkData&$bbgbg$vcdcdcdcd&$adidddddd$advId&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$bnbnbn"
             pussshi(vcdcdcdcd.toString())
         }
-        Snackbar.make(
-            dededef.root, "Link is ${hylphlyplhly}",
-            Snackbar.LENGTH_SHORT
-        ).show()
+//        Snackbar.make(
+//            dededef.root, "Link is ${hylphlyplhly}",
+//            Snackbar.LENGTH_SHORT
+//        ).show()
         Log.d("lolo", "link from vebViev is $hylphlyplhly")
         return ftgttg.getString("SAVED_URL", hylphlyplhly).toString()
     }
