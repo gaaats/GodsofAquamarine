@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
 import com.google.android.material.snackbar.Snackbar
@@ -23,45 +24,11 @@ import kotlinx.coroutines.launch
 @ActivityScoped
 class NevMainActivity : AppCompatActivity() {
 
-    var tempApsData = "sad"
-
     private val mainViewModel by viewModels<SortVievModell>()
 
     private var _binding: ActivityNevMainBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("ActivityNevMainBinding = null")
 
-    var lolo = "ffffff"
-
-//    val conversionDataListener = object : AppsFlyerConversionListener {
-//        override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
-//            val dataGotten = data?.get("campaign").toString()
-//
-//            tempApsData = dataGotten
-//            Snackbar.make(
-//                binding.root, "naming onConversionDataSuccess is ${tempApsData}",
-//                Snackbar.LENGTH_LONG
-//            ).show()
-//        }
-//
-//        override fun onConversionDataFail(p0: String?) {
-//
-//        }
-//
-//        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
-//
-//        }
-//
-//        override fun onAttributionFailure(p0: String?) {
-//        }
-//    }
-
-    private fun saveToSharedPref(key: String, daaata: String) {
-        val sharedPreferences =
-            getSharedPreferences(Constance.KEY_MAIN_FOR_SHARED_PREF, MODE_PRIVATE)
-        val editable = sharedPreferences.edit()
-        editable.putString(key, daaata)
-        editable.apply()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -70,14 +37,18 @@ class NevMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        //HERE ADD
-        mainViewModel.fetchDeferredAppLinkData(this)
 
-        mainViewModel.initAppsFlyerLib(this)
 
-//        AppsFlyerLib.getInstance()
-//            .init("EUBo2sR9eDH3fa45JwM2Y7", conversionDataListener, applicationContext)
-//        AppsFlyerLib.getInstance().start(this)
+
+        lifecycleScope.launch {
+            mainViewModel.iniSettingVievModel()
+
+            mainViewModel.fetchDeferredAppLinkData(this@NevMainActivity)
+
+            mainViewModel.initAppsFlyerLib(this@NevMainActivity)
+
+            mainViewModel.getGeoData()
+        }
 
         mainViewModel.currentMode.observe(this) {
             when (it) {
@@ -132,16 +103,6 @@ class NevMainActivity : AppCompatActivity() {
                         goToVebVievActivity(it)
                     }
                 }
-//                else -> {
-//                    Snackbar.make(
-//                        binding.root, "SortClass.EEEEEEllllse",
-//                        Snackbar.LENGTH_SHORT
-//                    ).show()
-//                    Log.d("lolo", "SortClass. else")
-//                    val intent = Intent(this, GaammActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
             }
         }
     }

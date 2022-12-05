@@ -2,7 +2,6 @@ package com.skgames.traffi
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -75,6 +74,15 @@ class SortVievModell @Inject constructor(
     }
 
     init {
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+            getAdvertisingIdClient()
+        }
+
+    }
+
+    fun iniSettingVievModel() {
         _currentMode.value = SortClass.LOADING
 
         _appLinkDataaaa.value =
@@ -87,17 +95,6 @@ class SortVievModell @Inject constructor(
 
         _ansvFromGeoService.value = DataFromApiResource.Loading()
         _ansvFromDevil.value = DataFromApiResource.Loading()
-
-//        fetchDeferredAppLinkData(application)
-
-        viewModelScope.launch(Dispatchers.IO) {
-            getAdvertisingIdClient()
-        }
-
-        // here
-        viewModelScope.launch() {
-            getGeoData()
-        }
     }
 
     fun fetchDeferredAppLinkData(context: Context) {
@@ -107,20 +104,15 @@ class SortVievModell @Inject constructor(
             appLinkData?.let {
                 saveSharedPref(
                     Constance.KEY_SHARED_PREF_APPLINK_DATA,
-                    appLinkData.targetUri.host.toString()
+                    it.targetUri.host.toString()
                 )
                 _appLinkDataaaa.postValue(it.targetUri.host.toString())
 
-                Log.d("lolo", "deeplink dataGotten GOOD")
-
-                //                val daaata = appLinkData.targetUri.host.toString()
-                //                _appLinkData.postValue(daaata)
             }
             if (appLinkData == null) {
                 if (appLinkDataaaa.value == null) {
                     saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, "null")
                     _appLinkDataaaa.postValue("null")
-                    Log.d("lolo", "deeplink fetchDeferredAppLinkData null")
                 }
             }
         }
@@ -143,9 +135,8 @@ class SortVievModell @Inject constructor(
     }
 
 
-    fun makeCheck() {
+    suspend fun makeCheck() {
 
-        Log.d("lolo", "in makeCheck")
 
         val checker = ansvFromDevil.value?.data?.appsChecker ?: "99"
 
@@ -156,42 +147,42 @@ class SortVievModell @Inject constructor(
         when (checker) {
 
             "1" -> {
-                Log.d("lolo", "Checker 1")
 
-                viewModelScope.launch {
-                    var naming = getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
-                    var deep = getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
-                    while (true) {
-                        Log.d("lolo", "naming ${naming}")
-                        Log.d("lolo", "deep ${deep}")
-                        if (naming != null && deep != null) {
-                            saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, naming)
-                            _appLinkDataaaa.postValue(naming)
+                var naming = getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
+                var deep = getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
+                while (true) {
 
-                            if (
-                                deep.contains(Constance.KEY_TDB2) || naming.contains(
-                                    Constance.KEY_TDB2
-                                ) || listOfAllGeo.contains(userGeo)
-                            ) {
-                                _currentMode.postValue(SortClass.REAL_START)
-                            } else {
-                                _currentMode.postValue(SortClass.MODERATION)
-                            }
+                    if (naming != null && deep != null) {
 
-                            break
+                        naming = _appsFlyerDattaGotten.value
+                        deep = appLinkDataaaa.value
+
+                        saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, deep)
+                        _appLinkDataaaa.postValue(deep)
+
+                        saveSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, naming)
+                        _appsFlyerDattaGotten.postValue(naming)
+
+                        if (
+                            deep!!.contains(Constance.KEY_TDB2) || naming!!.contains(
+                                Constance.KEY_TDB2
+                            ) || listOfAllGeo.contains(userGeo)
+                        ) {
+                            _currentMode.postValue(SortClass.REAL_START)
                         } else {
-                            Log.d("lolo", "in delay")
-                            delay(1000)
-                            if (naming == null) {
-                                Log.d("lolo", "replace naming")
-                                naming =
-                                    getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
-                            }
-                            if (deep == null) {
-                                Log.d("lolo", "replace deep")
-                                deep =
-                                    getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
-                            }
+                            _currentMode.postValue(SortClass.MODERATION)
+                        }
+
+                        break
+                    } else {
+                        delay(1000)
+                        if (naming == null) {
+                            naming =
+                                getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
+                        }
+                        if (deep == null) {
+                            deep =
+                                getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
                         }
                     }
                 }
@@ -233,7 +224,7 @@ class SortVievModell @Inject constructor(
         AppsFlyerLib.getInstance().start(context)
     }
 
-    private suspend fun getGeoData() {
+    suspend fun getGeoData() {
         val frgtg = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("http://pro.ip-api.com/")
@@ -245,12 +236,10 @@ class SortVievModell @Inject constructor(
             if (result.isSuccessful) {
 
                 val cooode = result.body()
-                Log.d("lolo", "code is ${cooode}")
 
 
                 _ansvFromGeoService.postValue(DataFromApiResource.Success(data = cooode))
 
-                // here previous data have already loaded
                 getDataDev()
             }
 
@@ -274,9 +263,6 @@ class SortVievModell @Inject constructor(
             val responseAppsCheker = result.appsChecker
             val responseGeo = result.geo
 
-            Log.d("lolo", "responseVeiv is ${responseVeiv}")
-            Log.d("lolo", "responseAppsCheker is ${responseAppsCheker}")
-            Log.d("lolo", "responseGeo is ${responseGeo}")
 
             _link.postValue(responseVeiv)
 
@@ -291,8 +277,7 @@ class SortVievModell @Inject constructor(
                 makeCheck()
                 break
             } else {
-                Log.d("lolo", "in delay _ansvFromDevil.value is DataFromApiResource.Success")
-                delay(100)
+                delay(1000)
             }
         }
     }
@@ -307,9 +292,6 @@ class SortVievModell @Inject constructor(
 
     }
 
-//    fun saveAppsFlyerData(dataGotten: String) {
-//        _appsFlyerDattaGotten.postValue(dataGotten)
-//    }
 
     val conversionDataListener = object : AppsFlyerConversionListener {
         override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
@@ -317,8 +299,6 @@ class SortVievModell @Inject constructor(
             tempApsData = dataGotten
             _appsFlyerDattaGotten.postValue(dataGotten)
             saveSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, dataGotten)
-
-            Log.d("lolo", "conversionDataListener dataGotten $dataGotten")
 
 
         }

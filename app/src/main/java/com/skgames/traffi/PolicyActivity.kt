@@ -35,8 +35,6 @@ class PolicyActivity : AppCompatActivity() {
         intent.getParcelableExtra(Constance.KEY_DATA_FOR_VEB_VIEV) as DataForVebViev?
     }
 
-//    private val mainViewModel by viewModels<SortVievModell>()
-
 
     private val bnbnbn = 1
 
@@ -98,41 +96,13 @@ class PolicyActivity : AppCompatActivity() {
         val ftgttg = getSharedPreferences("SP_WEBVIEW_PREFS", AppCompatActivity.MODE_PRIVATE)
         val packfrfrrfr = "com.skgames.traffi"
 
-
-//        val bnbbj:String? = Hawk.get(hkhkhkhk, "null")
-//        Log.d("lolo", "dataRecived in vebViev $dataRecived")
         val appsFlyData = dataRecived?.appsFlyerDattaGotten ?: "null"
 
-        val sharedPreferences = application.getSharedPreferences(
-            Constance.KEY_MAIN_FOR_SHARED_PREF,
-            Constance.MODE_PRIVATE
-        )
-//        val appsFlyData = sharedPreferences.getString(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, "nill")
-
-
-//        val advId: String? = Hawk.get(bbbvv, "null")
         val advId = dataRecived?.advertisingIdClient ?: "null"
 
-//        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
         val appLinkData = dataRecived?.appLinkData ?: "null"
-//        val appLinkData = sharedPreferences.getString(Constance.KEY_SHARED_PREF_APPLINK_DATA, "null")
 
         val linkkk = dataRecived?.linkViev ?: "null"
-        //        val gtgttg = Hawk.get(vfvvfvf, "null")
-
-
-//        val sharedPreferences = application.getSharedPreferences(
-//            Constance.KEY_MAIN_FOR_SHARED_PREF,
-//            Constance.MODE_PRIVATE
-//        )
-//        val linkFromShared =
-//            sharedPreferences.getString(Constance.KEY_SHARED_PREF_LINK, Constance.KEY_NOOOOO_DATA)
-//                .toString()
-//
-//        Snackbar.make(
-//            dededef.root, "linkFromShared is ${linkFromShared}",
-//            Snackbar.LENGTH_SHORT
-//        ).show()
 
         lifecycleScope.launch {
             delay(1500)
@@ -188,10 +158,7 @@ class PolicyActivity : AppCompatActivity() {
                 "$linkkk$frfrfrfr$appLinkData&$bbgbg$vcdcdcdcd&$adidddddd$advId&$sub4frfrr$packfrfrrfr&$bgbggbbg$eerret&$sub6frfr$bnbnbn"
             pussshi(vcdcdcdcd.toString())
         }
-//        Snackbar.make(
-//            dededef.root, "Link is ${hylphlyplhly}",
-//            Snackbar.LENGTH_SHORT
-//        ).show()
+
         Log.d("lolo", "link from vebViev is $hylphlyplhly")
         return ftgttg.getString("SAVED_URL", hylphlyplhly).toString()
     }
@@ -200,7 +167,6 @@ class PolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        Log.d("testVievModel", "vievmodelId $mainViewModel")
         dededef = ActivityPolicyBinding.inflate(layoutInflater)
         setContentView(dededef.root)
 
