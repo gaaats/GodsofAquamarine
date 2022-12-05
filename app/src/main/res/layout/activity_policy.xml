@@ -6,14 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".PolicyActivity">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_hor_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_hor_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="1.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vert_100"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="1.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vert_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.0" />
+
 
     <WebView
+        android:id="@+id/vvveeev"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/vvveeev"/>
+        app:layout_constraintBottom_toBottomOf="@id/guideline_hor_100"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vert_100"
+        app:layout_constraintStart_toStartOf="@id/guideline_vert_0"
+        app:layout_constraintTop_toTopOf="@id/guideline_hor_0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

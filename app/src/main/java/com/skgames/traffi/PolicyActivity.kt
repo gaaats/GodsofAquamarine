@@ -100,8 +100,15 @@ class PolicyActivity : AppCompatActivity() {
 
 
 //        val bnbbj:String? = Hawk.get(hkhkhkhk, "null")
-        Log.d("lolo", "dataRecived in vebViev $dataRecived")
+//        Log.d("lolo", "dataRecived in vebViev $dataRecived")
         val appsFlyData = dataRecived?.appsFlyerDattaGotten ?: "null"
+
+//        val sharedPreferences = application.getSharedPreferences(
+//            Constance.KEY_MAIN_FOR_SHARED_PREF,
+//            Constance.MODE_PRIVATE
+//        )
+//        val appsFlyData = sharedPreferences.getString(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, "nill")
+
 
 //        val advId: String? = Hawk.get(bbbvv, "null")
         val advId = dataRecived?.advertisingIdClient ?: "null"
@@ -113,10 +120,10 @@ class PolicyActivity : AppCompatActivity() {
         //        val gtgttg = Hawk.get(vfvvfvf, "null")
 
 
-        val sharedPreferences = application.getSharedPreferences(
-            Constance.KEY_MAIN_FOR_SHARED_PREF,
-            Constance.MODE_PRIVATE
-        )
+//        val sharedPreferences = application.getSharedPreferences(
+//            Constance.KEY_MAIN_FOR_SHARED_PREF,
+//            Constance.MODE_PRIVATE
+//        )
 //        val linkFromShared =
 //            sharedPreferences.getString(Constance.KEY_SHARED_PREF_LINK, Constance.KEY_NOOOOO_DATA)
 //                .toString()
@@ -129,26 +136,26 @@ class PolicyActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(100)
             Snackbar.make(
-                dededef.root, "appLinkData from VEBVIEV is ${appLinkData}",
+                dededef.root, "appLinkData in VEBVIEV is ${appLinkData}",
                 Snackbar.LENGTH_SHORT
             ).show()
             delay(1500)
             Snackbar.make(
-                dededef.root, "appsFlyerDattaGotten from VEBVIEV ${appsFlyData}",
+                dededef.root, "appsFlyer in VEBVIEV ${appsFlyData}",
                 Snackbar.LENGTH_SHORT
             ).show()
-//
-//            delay(1500)
-//            Snackbar.make(
-//                dededef.root, "link is ${linkkk}",
-//                Snackbar.LENGTH_SHORT
-//            ).show()
-//
-//            delay(1500)
-//            Snackbar.make(
-//                dededef.root, "adverId is ${advId}",
-//                Snackbar.LENGTH_SHORT
-//            ).show()
+
+            delay(1500)
+            Snackbar.make(
+                dededef.root, "link is ${linkkk}",
+                Snackbar.LENGTH_SHORT
+            ).show()
+
+            delay(1500)
+            Snackbar.make(
+                dededef.root, "adverId is ${advId}",
+                Snackbar.LENGTH_SHORT
+            ).show()
         }
 
 

@@ -1,6 +1,5 @@
 package com.skgames.traffi
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,19 +7,23 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.appsflyer.AppsFlyerConversionListener
 import com.appsflyer.AppsFlyerLib
-import com.facebook.applinks.AppLinkData
 import com.google.android.material.snackbar.Snackbar
 import com.skgames.traffi.databinding.ActivityNevMainBinding
 import com.skgames.traffi.nev.Constance
-import com.skgames.traffi.nev.DataFromApiResource
+import com.skgames.traffi.nev.DataForVebViev
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.scopes.ActivityScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 @ActivityScoped
 class NevMainActivity : AppCompatActivity() {
 
+    var tempApsData = "sad"
 
     private val mainViewModel by viewModels<SortVievModell>()
 
@@ -29,49 +32,28 @@ class NevMainActivity : AppCompatActivity() {
 
     var lolo = "ffffff"
 
-    private val appsFlyerConversionListener = object : AppsFlyerConversionListener {
-        override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
-            val dataGotten = data?.get("lolo").toString()
-            Snackbar.make(
-                binding.root, "naming from ACTIVITY is ${dataGotten}",
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
-
-        override fun onConversionDataFail(p0: String?) {}
-        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {}
-        override fun onAttributionFailure(p0: String?) {}
-    }
-
-
-    private fun fetchDeferredAppLinkData(context: Context) {
-        Log.d("appLinkDataaaa", "i am in fetchDeferredAppLinkData in NevMainActivity")
-        AppLinkData.fetchDeferredAppLinkData(
-            context
-        ) { appLinkData: AppLinkData? ->
-
-            appLinkData?.let {
-
-                val daaata = appLinkData.targetUri.host.toString()
-                mainViewModel.getffFetchDeferredAppLinkData(daaata)
-
-//                saveToSharedPref(Constance.KEY_APP_LINK_DATA, daaata)
-
-//                Snackbar.make(
-//                    binding.root, "appLinkData from ACTIVITY is ${daaata}",
-//                    Snackbar.LENGTH_SHORT
-//                ).show()
-
-                Log.d(
-                    "appLinkDataaaa",
-                    "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}"
-                )
-
-            }
-            if (appLinkData == null) {
-            }
-        }
-    }
+//    val conversionDataListener = object : AppsFlyerConversionListener {
+//        override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
+//            val dataGotten = data?.get("campaign").toString()
+//
+//            tempApsData = dataGotten
+//            Snackbar.make(
+//                binding.root, "naming onConversionDataSuccess is ${tempApsData}",
+//                Snackbar.LENGTH_LONG
+//            ).show()
+//        }
+//
+//        override fun onConversionDataFail(p0: String?) {
+//
+//        }
+//
+//        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+//
+//        }
+//
+//        override fun onAttributionFailure(p0: String?) {
+//        }
+//    }
 
     private fun saveToSharedPref(key: String, daaata: String) {
         val sharedPreferences =
@@ -88,87 +70,28 @@ class NevMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 //        mainViewModel.fetchDeferredAppLinkData(this)
-        fetchDeferredAppLinkData(this)
 
-        AppsFlyerLib.getInstance()
-            .init("EUBo2sR9eDH3fa45JwM2Y7", appsFlyerConversionListener, applicationContext)
-        AppsFlyerLib.getInstance().start(this)
+        mainViewModel.initAppsFlyerLib(this)
 
-
-
-//        mainViewModel.ansvFromDevil.observe(this) {
-//            when (it) {
-//                is DataFromApiResource.Success -> {
-////                    mainViewModel.makeCheck()
-//
-//                    when (mainViewModel.currentMode.value) {
-//
-//                        SortClass.MODERATION -> {
-//                            Log.d(
-//                                "lolo",
-//                                "mainViewModel.currentMode.value ${mainViewModel.currentMode.value}"
-//                            )
-//                            Log.d("lolo", "SortClass.MODERATION")
-//
-//                            val intent = Intent(this, GaammActivity::class.java)
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                        SortClass.TEST_VEB -> {
-//                            val dataForSend = mainViewModel.sendDataForVebVeiv()
-//                            Log.d("lolo", "SortClass.TEST_VEB")
-//                            val intent = Intent(this, PolicyActivity::class.java).also {
-//                                it.putExtra(Constance.KEY_DATA_FOR_VEB_VIEV, dataForSend)
-//                            }
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                        SortClass.TEST_ZAGLUSHKA_LIKE_MODERATION -> {
-//                            Log.d("lolo", "SortClass.TEST_ZAGLUSHKA_LIKE_MODERATION")
-//                            val intent = Intent(this, GaammActivity::class.java)
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                        SortClass.REAL_START -> {
-//                            val dataForSend = mainViewModel.sendDataForVebVeiv()
-//                            Log.d("lolo", "SortClass.REAL_START")
-//                            Log.d("lolo", "dataForSend $dataForSend")
-//                            val intent = Intent(this, PolicyActivity::class.java).also {
-//                                it.putExtra(Constance.KEY_DATA_FOR_VEB_VIEV, dataForSend)
-//                            }
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                        else -> {
-//                            Log.d("lolo", "SortClass. else")
-//                            val intent = Intent(this, GaammActivity::class.java)
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                    }
-//
-//                }
-//                is DataFromApiResource.Loading -> {
-//                    //do nothing
-//                }
-//                is DataFromApiResource.Error -> {
-//                    //make for some error
-//                    Snackbar.make(
-//                        binding.root,
-//                        "There is some error, close APP and try again",
-//                        Snackbar.LENGTH_LONG
-//                    ).show()
-//                }
-//            }
-//        }
-
+//        AppsFlyerLib.getInstance()
+//            .init("EUBo2sR9eDH3fa45JwM2Y7", conversionDataListener, applicationContext)
+//        AppsFlyerLib.getInstance().start(this)
 
         mainViewModel.currentMode.observe(this) {
             when (it) {
                 SortClass.LOADING -> {
+                    Snackbar.make(
+                        binding.root, "SortClass.LOADING",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
 
                 }
                 SortClass.MODERATION -> {
+
+                    Snackbar.make(
+                        binding.root, "SortClass.MODERATION",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                     Log.d(
                         "lolo",
                         "mainViewModel.currentMode.value ${mainViewModel.currentMode.value}"
@@ -180,37 +103,52 @@ class NevMainActivity : AppCompatActivity() {
                     finish()
                 }
                 SortClass.TEST_VEB -> {
+                    Snackbar.make(
+                        binding.root, "SortClass.TEST_VEB",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
                     val dataForSend = mainViewModel.sendDataForVebVeiv()
                     Log.d("lolo", "SortClass.TEST_VEB")
-                    val intent = Intent(this, PolicyActivity::class.java).also {
-                        it.putExtra(Constance.KEY_DATA_FOR_VEB_VIEV, dataForSend)
-                    }
-                    startActivity(intent)
-                    finish()
-                }
-                SortClass.TEST_ZAGLUSHKA_LIKE_MODERATION -> {
-                    Log.d("lolo", "SortClass.TEST_ZAGLUSHKA_LIKE_MODERATION")
-                    val intent = Intent(this, GaammActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    goToVebVievActivity(dataForSend)
                 }
                 SortClass.REAL_START -> {
-                    val dataForSend = mainViewModel.sendDataForVebVeiv()
-                    Log.d("lolo", "SortClass.REAL_START")
-                    Log.d("lolo", "dataForSend $dataForSend")
-                    val intent = Intent(this, PolicyActivity::class.java).also {
-                        it.putExtra(Constance.KEY_DATA_FOR_VEB_VIEV, dataForSend)
+                    Snackbar.make(
+                        binding.root, "SortClass.REAL_START",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+
+                    mainViewModel.sendDataForVebVeiv().also {
+                        goToVebVievActivity(it)
                     }
-                    startActivity(intent)
-                    finish()
                 }
-                else -> {
-                    Log.d("lolo", "SortClass. else")
-                    val intent = Intent(this, GaammActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                SortClass.REAL_START_NO_APPS -> {
+                    Snackbar.make(
+                        binding.root, "SortClass.REAL_START_NO_APPS",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                    mainViewModel.sendDataForVebVeiv().also {
+                        goToVebVievActivity(it)
+                    }
                 }
+//                else -> {
+//                    Snackbar.make(
+//                        binding.root, "SortClass.EEEEEEllllse",
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
+//                    Log.d("lolo", "SortClass. else")
+//                    val intent = Intent(this, GaammActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//                }
             }
         }
+    }
+
+    private fun goToVebVievActivity(dataForSend: DataForVebViev) {
+        val intent = Intent(this@NevMainActivity, PolicyActivity::class.java).also {
+            it.putExtra(Constance.KEY_DATA_FOR_VEB_VIEV, dataForSend)
+        }
+        startActivity(intent)
+        finish()
     }
 }

