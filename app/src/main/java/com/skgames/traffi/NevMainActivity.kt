@@ -69,7 +69,9 @@ class NevMainActivity : AppCompatActivity() {
         _binding = ActivityNevMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        mainViewModel.fetchDeferredAppLinkData(this)
+
+        //HERE ADD
+        mainViewModel.fetchDeferredAppLinkData(this)
 
         mainViewModel.initAppsFlyerLib(this)
 

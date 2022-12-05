@@ -16,7 +16,6 @@ import com.skgames.traffi.nev.DataForVebViev
 import com.skgames.traffi.nev.DataFromApiResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.selects.whileSelect
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
@@ -52,9 +51,9 @@ class SortVievModell @Inject constructor(
     val appsFlyerDattaGotten: LiveData<String?>
         get() = _appsFlyerDattaGotten
 
-    private val _appLinkData = MutableLiveData<String?>()
-    val appLinkData: LiveData<String?>
-        get() = _appLinkData
+    private val _appLinkDataaaa = MutableLiveData<String?>()
+    val appLinkDataaaa: LiveData<String?>
+        get() = _appLinkDataaaa
 
     private fun saveSharedPref(key: String, data: String?) {
         val sharedPreferences = application.getSharedPreferences(
@@ -78,7 +77,7 @@ class SortVievModell @Inject constructor(
     init {
         _currentMode.value = SortClass.LOADING
 
-        _appLinkData.value =
+        _appLinkDataaaa.value =
             getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
         _appsFlyerDattaGotten.value =
             getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
@@ -89,14 +88,14 @@ class SortVievModell @Inject constructor(
         _ansvFromGeoService.value = DataFromApiResource.Loading()
         _ansvFromDevil.value = DataFromApiResource.Loading()
 
-        fetchDeferredAppLinkData(application)
+//        fetchDeferredAppLinkData(application)
 
         viewModelScope.launch(Dispatchers.IO) {
             getAdvertisingIdClient()
         }
 
         // here
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             getGeoData()
         }
     }
@@ -106,14 +105,23 @@ class SortVievModell @Inject constructor(
             context
         ) { appLinkData: AppLinkData? ->
             appLinkData?.let {
-                _appLinkData.postValue(it.targetUri.host.toString())
+                saveSharedPref(
+                    Constance.KEY_SHARED_PREF_APPLINK_DATA,
+                    appLinkData.targetUri.host.toString()
+                )
+                _appLinkDataaaa.postValue(it.targetUri.host.toString())
 
-//                val daaata = appLinkData.targetUri.host.toString()
-//                _appLinkData.postValue(daaata)
+                Log.d("lolo", "deeplink dataGotten GOOD")
 
+                //                val daaata = appLinkData.targetUri.host.toString()
+                //                _appLinkData.postValue(daaata)
             }
             if (appLinkData == null) {
-
+                if (appLinkDataaaa.value == null) {
+                    saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, "null")
+                    _appLinkDataaaa.postValue("null")
+                    Log.d("lolo", "deeplink fetchDeferredAppLinkData null")
+                }
             }
         }
     }
@@ -121,7 +129,7 @@ class SortVievModell @Inject constructor(
     fun sendDataForVebVeiv(): DataForVebViev {
         saveSharedPref(Constance.KEY_SHARED_PREF_ADVERT_ID, advertisingIdClient.value.toString())
         saveSharedPref(Constance.KEY_SHARED_PREF_LINK, link.value.toString())
-        saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, appLinkData.value.toString())
+        saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, appLinkDataaaa.value.toString())
         saveSharedPref(
             Constance.KEY_SHARED_PREF_APPS_FLY_DATA, appsFlyerDattaGotten.value.toString()
         )
@@ -129,7 +137,7 @@ class SortVievModell @Inject constructor(
         return DataForVebViev(
             appsFlyerDattaGotten = appsFlyerDattaGotten.value.toString(),
             advertisingIdClient = advertisingIdClient.value.toString(),
-            appLinkData = appLinkData.value.toString(),
+            appLinkData = appLinkDataaaa.value.toString(),
             linkViev = link.value.toString()
         )
     }
@@ -145,30 +153,23 @@ class SortVievModell @Inject constructor(
 
         val listOfAllGeo = ansvFromDevil.value?.data?.geo ?: "none"
 
-//        val currentLink = ansvFromDevil.value?.data?.view ?: "errorLink"
-
-//        var dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-
         when (checker) {
 
             "1" -> {
                 Log.d("lolo", "Checker 1")
-//                initAppsFlyerLib()
 
-                CoroutineScope(Dispatchers.IO).launch {
+                viewModelScope.launch {
+                    var naming = getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
+                    var deep = getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
                     while (true) {
-                        Log.d("lolo", "appsFlyerDattaGotten.value ${appsFlyerDattaGotten.value}")
-                        if (appsFlyerDattaGotten.value != null) {
-
-                            Log.d("lolo", "appsFlyerDattaGotten все ок всередині")
-                            val dataGottenApps =
-                                appsFlyerDattaGotten.value ?: Constance.KEY_NOOOOO_DATA
-                            val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-
-//                            _appLinkData.postValue(dataAppLinkData)
+                        Log.d("lolo", "naming ${naming}")
+                        Log.d("lolo", "deep ${deep}")
+                        if (naming != null && deep != null) {
+                            saveSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, naming)
+                            _appLinkDataaaa.postValue(naming)
 
                             if (
-                                dataGottenApps.contains(Constance.KEY_TDB2) || dataAppLinkData.contains(
+                                deep.contains(Constance.KEY_TDB2) || naming.contains(
                                     Constance.KEY_TDB2
                                 ) || listOfAllGeo.contains(userGeo)
                             ) {
@@ -180,7 +181,17 @@ class SortVievModell @Inject constructor(
                             break
                         } else {
                             Log.d("lolo", "in delay")
-                            delay(4500)
+                            delay(1000)
+                            if (naming == null) {
+                                Log.d("lolo", "replace naming")
+                                naming =
+                                    getFromSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, null)
+                            }
+                            if (deep == null) {
+                                Log.d("lolo", "replace deep")
+                                deep =
+                                    getFromSharedPref(Constance.KEY_SHARED_PREF_APPLINK_DATA, null)
+                            }
                         }
                     }
                 }
@@ -190,37 +201,25 @@ class SortVievModell @Inject constructor(
             }
             else -> {
                 if (listOfAllGeo.contains(userGeo)) {
-//                    CoroutineScope(Dispatchers.IO).launch {
-//                        while (true) {
-//                            if (appLinkData.value != null) {
-//                                val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-//                                if (dataAppLinkData.contains(
-//                                        Constance.KEY_TDB2
-//                                    ) || listOfAllGeo.contains(userGeo)
-//                                ) {
-//                                    _currentMode.postValue(SortClass.REAL_START_NO_APPS)
-//                                } else {
-//                                    _currentMode.postValue(SortClass.MODERATION)
-//                                }
-//                                break
-//                            } else {
-//                                delay(1000)
-//                            }
-//                        }
-//                    }
-
-
-                    val dataAppLinkData = appLinkData.value ?: Constance.KEY_NOOOOO_DATA
-                    if (dataAppLinkData.contains(
-                            Constance.KEY_TDB2
-                        ) || listOfAllGeo.contains(userGeo)
-                    ) {
-                        _currentMode.postValue(SortClass.REAL_START_NO_APPS)
-                    } else {
-                        _currentMode.postValue(SortClass.MODERATION)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        while (true) {
+                            if (appLinkDataaaa.value != null) {
+                                val dataAppLinkData =
+                                    appLinkDataaaa.value ?: Constance.KEY_NOOOOO_DATA
+                                if (dataAppLinkData.contains(
+                                        Constance.KEY_TDB2
+                                    ) || listOfAllGeo.contains(userGeo)
+                                ) {
+                                    _currentMode.postValue(SortClass.REAL_START_NO_APPS)
+                                } else {
+                                    _currentMode.postValue(SortClass.MODERATION)
+                                }
+                                break
+                            } else {
+                                delay(1000)
+                            }
+                        }
                     }
-
-
                 } else {
                     _currentMode.postValue(SortClass.MODERATION)
                 }
@@ -289,7 +288,7 @@ class SortVievModell @Inject constructor(
 
         while (true) {
             if (_ansvFromDevil.value is DataFromApiResource.Success) {
-                    makeCheck()
+                makeCheck()
                 break
             } else {
                 Log.d("lolo", "in delay _ansvFromDevil.value is DataFromApiResource.Success")
@@ -317,6 +316,7 @@ class SortVievModell @Inject constructor(
             val dataGotten = data?.get("campaign").toString()
             tempApsData = dataGotten
             _appsFlyerDattaGotten.postValue(dataGotten)
+            saveSharedPref(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, dataGotten)
 
             Log.d("lolo", "conversionDataListener dataGotten $dataGotten")
 

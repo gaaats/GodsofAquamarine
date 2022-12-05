@@ -103,10 +103,10 @@ class PolicyActivity : AppCompatActivity() {
 //        Log.d("lolo", "dataRecived in vebViev $dataRecived")
         val appsFlyData = dataRecived?.appsFlyerDattaGotten ?: "null"
 
-//        val sharedPreferences = application.getSharedPreferences(
-//            Constance.KEY_MAIN_FOR_SHARED_PREF,
-//            Constance.MODE_PRIVATE
-//        )
+        val sharedPreferences = application.getSharedPreferences(
+            Constance.KEY_MAIN_FOR_SHARED_PREF,
+            Constance.MODE_PRIVATE
+        )
 //        val appsFlyData = sharedPreferences.getString(Constance.KEY_SHARED_PREF_APPS_FLY_DATA, "nill")
 
 
@@ -115,6 +115,7 @@ class PolicyActivity : AppCompatActivity() {
 
 //        val dpOnefrfrr: String? = Hawk.get(vovovo, "null")
         val appLinkData = dataRecived?.appLinkData ?: "null"
+//        val appLinkData = sharedPreferences.getString(Constance.KEY_SHARED_PREF_APPLINK_DATA, "null")
 
         val linkkk = dataRecived?.linkViev ?: "null"
         //        val gtgttg = Hawk.get(vfvvfvf, "null")
@@ -134,7 +135,7 @@ class PolicyActivity : AppCompatActivity() {
 //        ).show()
 
         lifecycleScope.launch {
-            delay(100)
+            delay(1500)
             Snackbar.make(
                 dededef.root, "appLinkData in VEBVIEV is ${appLinkData}",
                 Snackbar.LENGTH_SHORT
