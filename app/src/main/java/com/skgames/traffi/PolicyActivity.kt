@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
-import android.util.Log
 import android.webkit.*
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -104,30 +103,30 @@ class PolicyActivity : AppCompatActivity() {
 
         val linkkk = dataRecived?.linkViev ?: "null"
 
-        lifecycleScope.launch {
-            delay(1500)
-            Snackbar.make(
-                dededef.root, "appLinkData in VEBVIEV is ${appLinkData}",
-                Snackbar.LENGTH_SHORT
-            ).show()
-            delay(1500)
-            Snackbar.make(
-                dededef.root, "appsFlyer in VEBVIEV ${appsFlyData}",
-                Snackbar.LENGTH_SHORT
-            ).show()
-
-            delay(1500)
-            Snackbar.make(
-                dededef.root, "link is ${linkkk}",
-                Snackbar.LENGTH_SHORT
-            ).show()
-
-            delay(1500)
-            Snackbar.make(
-                dededef.root, "adverId is ${advId}",
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
+//        lifecycleScope.launch {
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "appLinkData in VEBVIEV is ${appLinkData}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "appsFlyer in VEBVIEV ${appsFlyData}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "link is ${linkkk}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//
+//            delay(1500)
+//            Snackbar.make(
+//                dededef.root, "adverId is ${advId}",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//        }
 
 
         val vcdcdcdcd = AppsFlyerLib.getInstance().getAppsFlyerUID(this)
@@ -159,7 +158,6 @@ class PolicyActivity : AppCompatActivity() {
             pussshi(vcdcdcdcd.toString())
         }
 
-        Log.d("lolo", "link from vebViev is $hylphlyplhly")
         return ftgttg.getString("SAVED_URL", hylphlyplhly).toString()
     }
 
@@ -172,11 +170,10 @@ class PolicyActivity : AppCompatActivity() {
 
         jgidhgjdk = dededef.vvveeev
 
-        //todo return later
-//        Snackbar.make(
-//            dededef.root, "Loading...",
-//            Snackbar.LENGTH_LONG
-//        ).show()
+        Snackbar.make(
+            dededef.root, "Loading...",
+            Snackbar.LENGTH_LONG
+        ).show()
 
 
         val gttgththy = CookieManager.getInstance()

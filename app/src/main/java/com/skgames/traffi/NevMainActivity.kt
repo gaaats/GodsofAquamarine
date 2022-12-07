@@ -37,9 +37,6 @@ class NevMainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-
-
-
         lifecycleScope.launch {
             mainViewModel.iniSettingVievModel()
 
@@ -53,52 +50,29 @@ class NevMainActivity : AppCompatActivity() {
         mainViewModel.currentMode.observe(this) {
             when (it) {
                 SortClass.LOADING -> {
-                    Snackbar.make(
-                        binding.root, "SortClass.LOADING",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-
+                    Log.d("lolo", "Loading")
+//                    Snackbar.make(
+//                        binding.root, "LOADING",
+//                        Snackbar.LENGTH_SHORT
+//                    ).show()
                 }
                 SortClass.MODERATION -> {
-
-                    Snackbar.make(
-                        binding.root, "SortClass.MODERATION",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
-                    Log.d(
-                        "lolo",
-                        "mainViewModel.currentMode.value ${mainViewModel.currentMode.value}"
-                    )
-                    Log.d("lolo", "SortClass.MODERATION")
-
                     val intent = Intent(this, GaammActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
                 SortClass.TEST_VEB -> {
-                    Snackbar.make(
-                        binding.root, "SortClass.TEST_VEB",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
                     val dataForSend = mainViewModel.sendDataForVebVeiv()
-                    Log.d("lolo", "SortClass.TEST_VEB")
                     goToVebVievActivity(dataForSend)
                 }
                 SortClass.REAL_START -> {
-                    Snackbar.make(
-                        binding.root, "SortClass.REAL_START",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
 
                     mainViewModel.sendDataForVebVeiv().also {
                         goToVebVievActivity(it)
                     }
                 }
                 SortClass.REAL_START_NO_APPS -> {
-                    Snackbar.make(
-                        binding.root, "SortClass.REAL_START_NO_APPS",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
+
                     mainViewModel.sendDataForVebVeiv().also {
                         goToVebVievActivity(it)
                     }
